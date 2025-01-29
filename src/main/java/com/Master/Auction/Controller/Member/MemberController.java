@@ -33,4 +33,9 @@ public class MemberController {
         else return "ok";
     }
 
+    @GetMapping("/login")
+    public String login() {
+        return "Member/login";
+    }
+
 }
