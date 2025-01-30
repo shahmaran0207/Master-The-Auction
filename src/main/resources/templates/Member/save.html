@@ -4,149 +4,168 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>회원가입</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script
-            src="https://code.jquery.com/jquery-3.6.3.min.js"
-            integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU="
-            crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
 </head>
 <body class="bg-gray-100 flex flex-col min-h-screen">
 
-<!-- 헤더 -->
-<header th:replace="~{header :: header}" class="bg-white shadow mb-4">
-    <nav class="bg-blue-600 text-white p-4">
-        <div class="container mx-auto">
-            <a href="/" class="text-xl font-bold">My Website</a>
-        </div>
-    </nav>
-</header>
+<header th:replace="~{header :: header}" class="bg-white shadow mb-4"></header>
 
-<!-- 메인 컨텐츠 -->
 <main class="flex-1 flex items-center justify-center">
-    <form id="signup-form" class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md"
-          action="/Member/save" method="post" enctype="multipart/form-data">
+    <form id="signup-form" class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md" action="/Member/save" method="post" enctype="multipart/form-data">
         <h2 class="text-2xl font-bold text-gray-800 text-center mb-6">회원가입</h2>
 
         <div class="mb-4">
-            <label for="memberEmail" class="block text-gray-700 font-medium mb-2">이메일:</label>
-            <input type="text" name="memberEmail" id="memberEmail"
-                   class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                   onblur="emailCheck()" oninput="resetEmailCheckResult()">
-            <div id="check-result" class="text-sm mt-1"></div>
+            <label for="mail" class="block text-gray-700 font-medium mb-2">이메일:</label>
+            <input type="text" name="mail" id="mail" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" oninput="emailCheck()">
+            <p id="check-result" class="text-sm mt-1"></p>
+            <button type="button" id="sendBtn"
+                    class="mt-2 w-full bg-blue-500 text-white py-2 rounded-lg font-medium hover:bg-blue-600 disabled:opacity-50"
+                    onclick="sendNumber()" disabled>인증번호 발송</button>
+        </div>
+
+        <div class="mb-4" id="mail_number" style="display: none;">
+            <input type="text" name="number" id="number" placeholder="인증번호 입력" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button type="button" id="confirmBtn" class="mt-2 w-full bg-green-500 text-white py-2 rounded-lg font-medium hover:bg-green-600" onclick="confirmNumber()">이메일 인증</button>
+        </div>
+
+        <div class="mb-4">
+            <label for="memberBirth" class="block text-gray-700 font-medium mb-2">생년월일:</label>
+            <input type="date" name="memberBirth" id="memberBirth" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
 
         <div class="mb-4">
             <label for="memberPassword" class="block text-gray-700 font-medium mb-2">비밀번호:</label>
-            <input type="password" name="memberPassword" id="memberPassword"
-                   class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                   onblur="passwordCheck()" oninput="resetPasswordCheckResult()">
-            <div id="password-check-result" class="text-sm mt-1"></div>
+            <input type="password" name="memberPassword" id="memberPassword" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" oninput="passwordCheck()">
+            <p id="password-check-result" class="text-sm mt-1"></p>
         </div>
 
         <div class="mb-4">
             <label for="memberName" class="block text-gray-700 font-medium mb-2">이름:</label>
-            <input type="text" name="memberName" id="memberName"
-                   class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                   onkeyup="checkFormValidity()">
+            <input type="text" name="memberName" id="memberName" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" oninput="checkFormValidity()">
         </div>
-
-        <div class="mb-4">
-            <label for="birthday" class="block text-gray-700 font-medium mb-2">생년월일:</label>
-            <input type="date" name="birthday" id="birthday"
-                   class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-        </div>
-
 
         <div class="mb-4">
             <label for="memberProfile" class="block text-gray-700 font-medium mb-2">파일 첨부:</label>
-            <input type="file" id="memberProfile" name="memberProfile"
-                   class="w-full px-4 py-2 border rounded-lg bg-gray-50">
+            <input type="file" id="memberProfile" name="memberProfile" class="w-full px-4 py-2 border rounded-lg bg-gray-50">
         </div>
 
-        <button type="submit" id="submit-btn"
-                class="w-full bg-blue-500 text-white py-2 rounded-lg font-medium hover:bg-blue-600 disabled:opacity-50"
-                disabled>
-            회원가입
-        </button>
+        <button type="submit" id="submit-btn" class="w-full bg-blue-500 text-white py-2 rounded-lg font-medium hover:bg-blue-600 disabled:opacity-50" disabled>회원가입</button>
     </form>
 </main>
 
-<script th:inline="javascript">
-    const emailCheck = () => {
-        const email = document.getElementById("memberEmail").value;
-        const checkResult = document.getElementById("check-result");
-        const submitBtn = document.getElementById("submit-btn");
+<script>
+    function emailCheck() {
+        let email = document.getElementById("mail").value.trim();
+        let checkResult = document.getElementById("check-result");
+        let sendBtn = document.getElementById("sendBtn");
+        let emailVerified = false; // 이메일 인증 상태를 추적하는 변수
 
-        checkResult.innerHTML = "Checking email...";
-        checkResult.style.color = "blue";
-        submitBtn.disabled = true;
+        if (email === "") {
+            checkResult.innerHTML = "";
+            sendBtn.disabled = true;
+            return;
+        }
 
         $.ajax({
-            type: "post",
             url: "/Member/email-check",
+            type: "post",
             data: { "memberEmail": email },
-
             success: function (res) {
                 if (res === "ok") {
+                    checkResult.textContent = "사용 가능한 이메일 입니다.";
                     checkResult.style.color = "green";
-                    checkResult.innerHTML = "사용 가능한 이메일 입니다.";
-                    checkFormValidity();
+                    sendBtn.disabled = false;
                 } else {
+                    checkResult.textContent = "이미 사용중인 이메일 입니다.";
                     checkResult.style.color = "red";
-                    checkResult.innerHTML = "이미 사용중인 이메일 입니다.";
-                    submitBtn.disabled = true;
+                    sendBtn.disabled = true;
                 }
-            },
-            error: function (err) {
-                console.log("Error:", err);
-                submitBtn.disabled = true;
+                checkFormValidity();
             }
         });
-    };
+    }
 
-    const resetEmailCheckResult = () => {
-        const checkResult = document.getElementById("check-result");
-        checkResult.innerHTML = "";
-        checkResult.style.color = "black";
-        document.getElementById("submit-btn").disabled = true;
-    };
+    function sendNumber() {
+        let email = $("#mail").val().trim();
 
-    const passwordCheck = () => {
-        const password = document.getElementById("memberPassword").value;
-        const passwordCheckResult = document.getElementById("password-check-result");
+        if (email === "") {
+            alert("이메일을 입력하세요.");
+            return;
+        }
+
+        $.ajax({
+            url: "/api/v1/email/send",
+            type: "post",
+            data: { "mail": email },
+            success: function(response) {
+                console.log(response); // 응답 로그를 출력하여 실제 응답을 확인
+                if (response && response === "인증코드가 발송되었습니다.") {
+                    alert("인증번호가 이메일로 전송되었습니다.");
+                    $("#mail_number").show(); // 인증번호 입력 필드 표시
+                } else {
+                    console.log(response.status);
+                    alert("인증번호 전송에 실패했습니다. 다시 시도해주세요.");
+                }
+            },
+
+
+            error: function() {
+                alert("서버 오류로 인해 인증번호 전송에 실패했습니다.");
+            }
+        });
+
+    }
+
+
+    function confirmNumber() {
+        let mail = $("#mail").val();
+        let number = $("#number").val();
+
+        $.ajax({
+            url: "/api/v1/email/verify",
+            type: "post",
+            data: { "mail": mail, "verifyCode": number },
+            success: function(response) {
+                if (response && response === "인증이 완료되었습니다.") {
+                alert("인증 성공");
+                emailVerified = true; // 이메일 인증 상태를 true로 변경
+                checkFormValidity(); // 유효성 검사 재실행
+                } else {
+                    console.log(response.status);
+                    alert("인증번호가 잘못되었습니다. 다시 시도해주세요.");
+                }
+            },
+            error: function () {
+                alert("인증번호가 잘못되었습니다. 다시 시도해주세요.");
+            }
+        });
+    }
+
+
+    function passwordCheck() {
+        let password = document.getElementById("memberPassword").value;
+        let result = document.getElementById("password-check-result");
 
         if (password.length >= 7) {
-            passwordCheckResult.style.color = "blue";
-            passwordCheckResult.innerHTML = "사용 가능한 비밀번호 입니다.";
+            result.textContent = "사용 가능한 비밀번호 입니다.";
+            result.style.color = "blue";
         } else {
-            passwordCheckResult.style.color = "red";
-            passwordCheckResult.innerHTML = "비밀번호 길이가 7자 이하입니다.";
+            result.textContent = "비밀번호 길이가 7자 이하입니다.";
+            result.style.color = "red";
         }
         checkFormValidity();
-    };
+    }
 
-    const resetPasswordCheckResult = () => {
-        const passwordCheckResult = document.getElementById("password-check-result");
-        passwordCheckResult.innerHTML = "";
-        passwordCheckResult.style.color = "black";
-        document.getElementById("submit-btn").disabled = true;
-    };
+    function checkFormValidity() {
+        let emailValid = document.getElementById("check-result").style.color === "green";
+        let passwordValid = document.getElementById("password-check-result").style.color === "blue";
+        let nameValid = document.getElementById("memberName").value.trim() !== "";
 
-    const checkFormValidity = () => {
-        const email = document.getElementById("memberEmail").value;
-        const password = document.getElementById("memberPassword").value;
-        const name = document.getElementById("memberName").value;
-        const isEmailValid = document.getElementById("check-result").style.color === "green";
-        const isPasswordValid = document.getElementById("password-check-result").style.color === "blue";
-
-        document.getElementById("submit-btn").disabled = !(email && password && name && isEmailValid && isPasswordValid);
-    };
-
-    document.getElementById("memberEmail").addEventListener("blur", emailCheck);
-    document.getElementById("memberEmail").addEventListener("input", resetEmailCheckResult);
-    document.getElementById("memberPassword").addEventListener("blur", passwordCheck);
-    document.getElementById("memberPassword").addEventListener("input", resetPasswordCheckResult);
-    document.getElementById("memberName").addEventListener("input", checkFormValidity);
+        document.getElementById("submit-btn").disabled = !(emailValid && passwordValid && nameValid && emailVerified );
+    }
 </script>
+
 </body>
 </html>

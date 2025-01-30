@@ -1,8 +1,8 @@
 package com.Master.Auction.Service.Member;
 
 import com.Master.Auction.Repository.Member.MemberProfileRepository;
-import com.Master.Auction.Entity.Member.MemberProfileEntity;
 import com.Master.Auction.Repository.Member.MemberRepository;
+import com.Master.Auction.Entity.Member.MemberProfileEntity;
 import org.springframework.web.multipart.MultipartFile;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.Master.Auction.Entity.Member.MemberEntity;
@@ -62,4 +62,5 @@ public class MemberService {
             memberProfileRepository.save(memberProfileEntity);
         }
     }
+
 }
