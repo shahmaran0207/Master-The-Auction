@@ -1,55 +1,124 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <title>Login</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>로그인</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script
-            src="https://code.jquery.com/jquery-3.6.3.min.js"
-            integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU="
-            crossorigin="anonymous"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
+
+
+    <style>
+
+        form {
+            background-color: #fff;
+            padding: 20px 40px;
+            width: 80%;
+            margin-top: 200px;
+            margin-left: 200px;
+            height: auto;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        label {
+            display: block;
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 5px;
+            text-align: left;
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 flex flex-col min-h-screen">
-
-<!-- 헤더 -->
-<header th:replace="~{header :: header}" class="bg-white shadow mb-4">
-    <nav class="bg-blue-600 text-white p-4">
-        <div class="container mx-auto">
-            <a href="/" class="text-xl font-bold">My Website</a>
-        </div>
-    </nav>
-</header>
-
-<!-- 메인 컨텐츠 -->
-<main class="flex-1 flex items-center justify-center">
-    <form id="signup-form" class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md"
-          action="/Member/login" method="post" enctype="multipart/form-data">
-        <h2 class="text-2xl font-bold text-gray-800 text-center mb-6">로그인</h2>
-
-        <div class="mb-4">
-            <label for="memberEmail" class="block text-gray-700 font-medium mb-2">이메일:</label>
-            <input type="text" name="memberEmail" id="memberEmail"
-                   class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                   onblur="emailCheck()" oninput="resetEmailCheckResult()">
-            <div id="check-result" class="text-sm mt-1"></div>
-        </div>
-
-        <div class="mb-4">
-            <label for="memberPassword" class="block text-gray-700 font-medium mb-2">비밀번호:</label>
-            <input type="password" name="memberPassword" id="memberPassword"
-                   class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                   onblur="passwordCheck()" oninput="resetPasswordCheckResult()">
-            <div id="password-check-result" class="text-sm mt-1"></div>
-        </div>
-
-        <button type="submit" id="submit-btn"
-                class="w-full bg-blue-500 text-white py-2 rounded-lg font-medium hover:bg-blue-600 ">
-            로그인
-        </button>
-    </form>
-</main>
+<body>
+<div class="min-h-screen flex flex-col">
+    <div th:replace="~{header :: header}"></div>
+    <main class="flex-1">
+        <form onsubmit="event.preventDefault(); handleLogin();">
+            <label for="email">이메일:</label>
+            <input type="text" id="email" required>
+            <label for="password">비밀번호:</label>
+            <input type="password" id="password" required>
+            <input type="submit" value="로그인">
+        </form>
+    </main>
+</div>
 
 
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyD1ukx1FfMVPjRyx_ycSd8TEVEEto2ZLnk",
+        authDomain: "wit-test-c0fc5.firebaseapp.com",
+        projectId: "wit-test-c0fc5",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    async function handleLogin() {
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const idToken = await userCredential.user.getIdToken();
+
+            const response = await fetch('/Member/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ idToken })
+            });
+
+            if (response.ok) {
+                window.location.href = "/";
+            } else {
+                const errorData = await response.json();
+                console.error("Login failed:", errorData);
+                alert("Login failed: " + (errorData.message || "Unknown error"));
+            }
+        } catch (error) {
+            console.error("Error logging in:", error);
+            alert("Authentication failed: " + error.message);
+        }
+    }
+    window.handleLogin = handleLogin;
+</script>
 </body>
 </html>

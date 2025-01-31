@@ -25,24 +25,22 @@ public class MemberService {
     private final MemberProfileRepository memberProfileRepository;
 
     public String emailCheck(String memberemail) {
-        Optional<MemberEntity> optionalMemberEntity = memberRepository.findByMemberEmail(memberemail);
+        Optional<MemberEntity> optionalMemberEntity = memberRepository.findByMail(memberemail);
         if(optionalMemberEntity.isPresent()) {
             MemberEntity memberEntity = optionalMemberEntity.get();
-            return memberEntity.getMemberEmail();
+            return memberEntity.getMail();
         } else return null;
     }
 
 
     public void save(MemberDTO memberDTO) throws IOException, FirebaseAuthException {
-        String encodedPassword = PasswordUtils.encodePassword(memberDTO.getMemberPassword());
 
         UserRecord.CreateRequest request = new UserRecord.CreateRequest()
-                .setEmail(memberDTO.getMemberEmail())
-                .setPassword(encodedPassword);
+                .setEmail(memberDTO.getMail())
+                .setPassword(memberDTO.getMemberPassword());
 
         UserRecord userRecord = FirebaseAuth.getInstance().createUser(request);
 
-        System.out.println(memberDTO);
         if (memberDTO.getMemberProfile() == null) {
             MemberEntity memberEntity = MemberEntity.toSaveEntity(memberDTO);
             memberRepository.save(memberEntity);
@@ -51,7 +49,7 @@ public class MemberService {
             MultipartFile memberProfile = memberDTO.getMemberProfile();
             String originalFilename = memberProfile.getOriginalFilename();
             String storedFileName = System.currentTimeMillis() + "_" + originalFilename;
-            String savePath = "C:/Users/wjaud/OneDrive/바탕 화면/MOST IMPORTANT/Member_project/profile/" + storedFileName;
+            String savePath = "C:/Users/wjaud/OneDrive/바탕 화면/MOST IMPORTANT/Master-The-Auction/profile/" + storedFileName;
             memberProfile.transferTo(new File(savePath));
 
             MemberEntity memberEntity = MemberEntity.toSaveMemberFile(memberDTO);
@@ -63,4 +61,20 @@ public class MemberService {
         }
     }
 
+    public MemberDTO login(String email) {
+        Optional<MemberEntity> bymemberemail = memberRepository.findByMail(email);
+
+        MemberEntity memberEntity = bymemberemail.get();
+        MemberDTO dto= MemberDTO.toMemberDTO(memberEntity);
+
+        return dto;
+    }
+
+    public MemberDTO findById(Long id) {
+        Optional<MemberEntity> optionalMemberEntity = memberRepository.findById(id);
+
+        if(optionalMemberEntity.isPresent()) {
+            return MemberDTO.toMemberDTO(optionalMemberEntity.get());
+        } else return null;
+    }
 }

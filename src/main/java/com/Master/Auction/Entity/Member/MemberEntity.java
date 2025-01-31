@@ -2,6 +2,8 @@ package com.Master.Auction.Entity.Member;
 
 import com.Master.Auction.DTO.Member.MemberDTO;
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,7 +21,7 @@ public class MemberEntity {
     private String MemberName;
 
     @Column(nullable = false)
-    private String memberEmail;
+    private String mail;
 
     @Column(nullable = false)
     private String birthday;
@@ -30,9 +32,12 @@ public class MemberEntity {
     @Column
     private int fileAttached;
 
+    @OneToMany(mappedBy = "memberEntity", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<MemberProfileEntity> memberProfileEntityList = new ArrayList<>();
+
     public static MemberEntity toSaveEntity(MemberDTO memberDTO) {
         MemberEntity member = new MemberEntity();
-        member.setMemberEmail(memberDTO.getMemberEmail());
+        member.setMail(memberDTO.getMail());
         member.setMemberName(memberDTO.getMemberName());
         member.setBirthday(memberDTO.getBirthday());
         member.setRole(1);
@@ -47,7 +52,7 @@ public class MemberEntity {
         memberEntity.setRole(memberDTO.getRole());
         memberEntity.setBirthday(memberDTO.getBirthday());
         memberEntity.setMemberName(memberDTO.getMemberName());
-        memberEntity.setMemberEmail(memberDTO.getMemberEmail());
+        memberEntity.setMail(memberDTO.getMail());
         memberEntity.setFileAttached(1);
         return memberEntity;
     }

@@ -1,11 +1,11 @@
 package com.Master.Auction.Controller.Member;
 
-import com.Master.Auction.DTO.Member.EmailDto;
 import com.Master.Auction.Service.Member.EmailService;
+import org.springframework.web.bind.annotation.*;
+import com.Master.Auction.DTO.Member.EmailDTO;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -16,7 +16,7 @@ public class EmailController {
 
     // 인증코드 메일 발송
     @PostMapping("/send")
-    public String mailSend(EmailDto emailDto) throws MessagingException {
+    public String mailSend(EmailDTO emailDto) throws MessagingException {
         log.info("EmailController.mailSend()");
         emailService.sendEmail(emailDto.getMail());
         return "인증코드가 발송되었습니다.";
@@ -24,7 +24,7 @@ public class EmailController {
 
     // 인증코드 인증
     @PostMapping("/verify")
-    public String verify(EmailDto emailDto) {
+    public String verify(EmailDTO emailDto) {
         log.info("EmailController.verify()");
 
         boolean isVerify = emailService.verifyEmailCode(emailDto.getMail(), emailDto.getVerifyCode());

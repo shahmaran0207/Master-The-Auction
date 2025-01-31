@@ -1,18 +1,16 @@
 package com.Master.Auction.Service.Member;
 
-import com.Master.Auction.Config.RedisUtil;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.stereotype.Service;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
-import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
-
-import java.util.Objects;
+import org.springframework.mail.javamail.JavaMailSender;
+import com.Master.Auction.Config.Email.RedisUtil;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.springframework.stereotype.Service;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.MessagingException;
+import lombok.RequiredArgsConstructor;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.TemplateEngine;
+import lombok.extern.slf4j.Slf4j;
 import java.util.Random;
 
 @Slf4j
@@ -61,7 +59,7 @@ public class EmailService {
 
         MimeMessage message = javaMailSender.createMimeMessage();
         message.addRecipients(MimeMessage.RecipientType.TO, email);
-        message.setSubject("안녕하세요. 인증번호입니다.");
+        message.setSubject("[MFA - Master The Auction] 회원가입 인증 코드 안내");
         message.setFrom(senderEmail);
         message.setText(setContext(authCode), "utf-8", "html");
 

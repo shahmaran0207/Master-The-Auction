@@ -19,7 +19,7 @@ public class MemberProfileEntity {
     @Column
     private String storedFileName;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private MemberEntity memberEntity;
 
