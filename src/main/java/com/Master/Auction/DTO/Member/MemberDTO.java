@@ -14,6 +14,8 @@ public class MemberDTO {
 
     private int fileAttached;
     private int role;
+    private int likesCount;
+    private int hatesCount;
 
     private String MemberPassword;
     private String mail;
@@ -24,6 +26,15 @@ public class MemberDTO {
     private String birthday;
 
     private MultipartFile memberProfile;
+
+    public MemberDTO(Long id, String mail, String memberName, String birthday, int likesCount, int hatesCount){
+        this.id = id;
+        this.mail = mail;
+        this.memberName = memberName;
+        this.birthday = birthday;
+        this.likesCount = likesCount;
+        this.hatesCount = hatesCount;
+    }
 
     public static MemberDTO toMemberDTO(MemberEntity memberEntity) {
         MemberDTO memberDTO = new MemberDTO();

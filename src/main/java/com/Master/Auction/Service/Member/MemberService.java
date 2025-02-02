@@ -6,10 +6,13 @@ import com.Master.Auction.Entity.Member.MemberProfileEntity;
 import org.springframework.web.multipart.MultipartFile;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.Master.Auction.Entity.Member.MemberEntity;
-import com.Master.Auction.Config.PasswordUtils;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import com.Master.Auction.DTO.Member.MemberDTO;
 import org.springframework.stereotype.Service;
 import com.google.firebase.auth.FirebaseAuth;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import com.google.firebase.auth.UserRecord;
 import lombok.RequiredArgsConstructor;
 import java.io.IOException;
@@ -20,7 +23,6 @@ import java.io.File;
 @RequiredArgsConstructor
 public class MemberService {
 
-    private final PasswordUtils passwordUtils;
     private final MemberRepository memberRepository;
     private final MemberProfileRepository memberProfileRepository;
 
@@ -76,5 +78,18 @@ public class MemberService {
         if(optionalMemberEntity.isPresent()) {
             return MemberDTO.toMemberDTO(optionalMemberEntity.get());
         } else return null;
+    }
+
+    public Page<MemberDTO> paging(Pageable pageable) {
+        int page = pageable.getPageNumber() - 1;
+        int pageLimit = 10;
+
+        Page<MemberEntity> memberEntities =
+                memberRepository.findAll(PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
+
+        Page<MemberDTO> memberDTOS = memberEntities.map(member ->
+                new MemberDTO(member.getId(), member.getMail(),member.getMemberName(), member.getBirthday(),
+                        member.getLikesCount(), member.getHatesCount()));
+        return memberDTOS;
     }
 }

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>MFA - My Page</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="flex flex-col min-h-screen bg-gray-900 text-gray-300">
+<div th:replace="~{header :: header}"></div>
+
+<main class="flex flex-col items-center flex-1 py-12">
+    <div class="w-full max-w-4xl auction-card">
+        <div class="auction-header text-2xl font-bold tracking-wide">
+            <span th:text="${member.memberName}"></span> 님 상세 정보
+        </div>
+
+        <div class="p-6 flex flex-col items-center">
+            <div class="profile-image-container mb-6" th:if="${member.fileAttached == 1}">
+                <img th:src="@{|/upload/${member.storedFileName}|}" alt="Profile Image" class="profile-image">
+            </div>
+
+            <table class="w-full table-fixed text-lg border-separate border-spacing-2">
+                <tbody>
+                <tr>
+                    <th>ID</th>
+                    <td th:text="${member.id}"></td>
+                </tr>
+                <tr>
+                    <th>이메일</th>
+                    <td th:text="${member.mail}"></td>
+                </tr>
+                <tr>
+                    <th>이름</th>
+                    <td th:text="${member.memberName}"></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="button-container flex items-center space-x-4">
+                <button id="like-button" onclick="toggleLike()" class="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600">
+                    👍 좋아요
+                </button>
+                <span id="like-count" class="like-count text-lg font-semibold text-blue-500" th:text="${member.likesCount}">0</span>
+
+                <button id="hate-button" onclick="toggleHate()" class="flex items-center px-4 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600">
+                    👎 싫어요
+                </button>
+                <span id="hate-count" class="like-count text-lg font-semibold text-red-500" th:text="${member.hatesCount}">0</span>
+
+            </div>
+            <br>
+            <button onclick="listReq()" class="btn-gold">목록</button>
+
+        </div>
+    </div>
+</main>
+</body>
+
+<script th:inline="javascript">
+    const listReq = () => {
+        const page = [[${page}]];
+        location.href = "/Member/list?page=" + page;
+    };
+
+    let isLiked = false;
+    let likeCount = 0;
+
+    let isHated = false;
+    let hateCount = 0;
+
+    $(document).ready(function () {
+        loadLikes();
+        loadHates();
+    });
+
+    const loadLikes = () => {
+        $.ajax({
+            type: "GET",
+            url: `/api/guidelikes/count/${guideId}`,
+            success: function (count) {
+                likeCount = count;
+                $('#like-count').text(likeCount);
+            },
+            error: function (err) {
+                console.log("좋아요 수 로드 실패", err);
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: `/api/guidelikes/status/${guideId}/${memberId}`,
+            success: function (isLiked) {
+                $('#like-button').text(isLiked ? "👍 좋아요 취소" : "👍 좋아요");
+            },
+            error: function (err) {
+                console.log("좋아요 상태 로드 실패", err);
+            }
+        });
+    };
+
+    const loadHates = () => {
+        $.ajax({
+            type: "GET",
+            url: `/api/guidehates/count/${guideId}`,
+            success: function (count) {
+                hateCount = count;
+                $('#hate-count').text(hateCount);
+            },
+            error: function (err) {
+                console.log("싫어요 수 로드 실패", err);
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: `/api/guidehates/status/${guideId}/${memberId}`,
+            success: function (isHated) {
+                $('#hate-button').text(isHated ? "👎 싫어요 취소" : "👎 싫어요");
+            },
+            error: function (err) {
+                console.log("싫어요 상태 로드 실패", err);
+            }
+        });
+    };
+
+    window.toggleLike = () => {
+        $.ajax({
+            type: "POST",
+            url: "/api/guidelikes/toggle",
+            contentType: "application/json",
+            data: JSON.stringify({ "memberId": memberId, "AnotherMemberId": AnotherMemberId }),
+            success: function (res) {
+                likeCount += res === "Like added" ? 1 : -1;
+                $('#like-count').text(likeCount);
+                $('#like-button').text(res === "Like added" ? "👍 좋아요 취소" : "👍 좋아요");
+            },
+            error: function (err) {
+                console.log("좋아요 처리 실패", err);
+            }
+        });
+    };
+
+    window.toggleHate = () => {
+        $.ajax({
+            type: "POST",
+            url: "/api/guidehates/toggle",
+            contentType: "application/json",
+            data: JSON.stringify({ "guideId": guideId, "memberId": memberId }),
+            success: function (res) {
+                hateCount += res === "Hate added" ? 1 : -1;
+                $('#hate-count').text(hateCount);
+                $('#hate-button').text(res === "Hate added" ? "👎 싫어요 취소" : "👎 싫어요");
+            },
+            error: function (err) {
+                console.log("싫어요 처리 실패", err);
+            }
+        });
+    };
+</script>
+</html>
