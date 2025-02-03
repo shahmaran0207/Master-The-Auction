@@ -3,6 +3,7 @@ package com.Master.Auction.Service.Member;
 import com.Master.Auction.Repository.Member.MemberLikeRepository;
 import org.springframework.transaction.annotation.Transactional;
 import com.Master.Auction.Repository.Member.MemberRepository;
+import com.Master.Auction.Entity.Member.MemberLikeEntity;
 import com.Master.Auction.Entity.Member.MemberEntity;
 import jakarta.persistence.EntityNotFoundException;
 import com.Master.Auction.DTO.Member.MemberLikeDTO;
@@ -19,8 +20,8 @@ public class MemberLikeService {
     @Transactional
     public String toggleLike(MemberLikeDTO memberDTO) {
 
-        Long likerId = memberDTO.getMemberId();
-        Long targetId = memberDTO.getAnotherMemberId();
+        Long likerId = memberDTO.getLiker();
+        Long targetId = memberDTO.getTarget();
 
         if( likerId==null || targetId==null ) {
             throw new IllegalArgumentException("liker ID and target ID must not be null");
@@ -32,7 +33,17 @@ public class MemberLikeService {
         MemberEntity target = memberRepository.findById(likerId)
                 .orElseThrow(() -> new EntityNotFoundException("target not found with Id: " + targetId));
 
-
-        return null;
+        if (memberLikeRepository.existsByLikerAndTarget(liker, target)) {
+            memberLikeRepository.deleteByLikerAndTarget(liker, target);
+            liker.decreaseLikesCount();
+            memberRepository.save(liker);
+            return "Like removed";
+        } else {
+            MemberLikeEntity like = MemberLikeEntity.toSaveEntity(liker, target);
+            memberLikeRepository.save(like);
+            liker.increaseLikesCount();
+            memberRepository.save(target);
+            return "Like added";
+        }
      }
 }

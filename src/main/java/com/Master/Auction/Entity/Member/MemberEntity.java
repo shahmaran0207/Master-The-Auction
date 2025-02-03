@@ -50,7 +50,7 @@ public class MemberEntity {
     private List<MemberLikeEntity> likedByMembers = new ArrayList<>();
 
     // 내가 좋아요를 누른 회원들
-    @OneToMany(mappedBy = "liker", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "hater", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberHateEntity> hatedMembers = new ArrayList<>();
 
     // 나를 좋아요한 회원들

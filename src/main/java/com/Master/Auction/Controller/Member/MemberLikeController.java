@@ -14,6 +14,7 @@ public class MemberLikeController {
 
     @PostMapping("/toggle")
     public String toggleLike(@RequestBody MemberLikeDTO memberLikeDTO) {
+        System.out.println(memberLikeDTO);
         return memberLikeService.toggleLike(memberLikeDTO);
     }
 

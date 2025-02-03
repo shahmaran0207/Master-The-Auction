@@ -15,8 +15,8 @@ public class MemberHateEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "liker_id", nullable = false)
-    private MemberEntity liker;
+    @JoinColumn(name = "hater_id", nullable = false)
+    private MemberEntity hater;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "target_id", nullable = false)

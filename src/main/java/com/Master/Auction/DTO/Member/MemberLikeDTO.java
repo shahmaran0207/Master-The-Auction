@@ -10,6 +10,6 @@ import lombok.Data;
 public class MemberLikeDTO {
 
     private Long id;
-    private Long memberId;
-    private Long AnotherMemberId;
+    private Long liker;
+    private Long target;
 }

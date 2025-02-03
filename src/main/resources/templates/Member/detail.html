@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <title>MFA - My Page</title>
     <link rel="stylesheet" href="/css/style.css">
@@ -63,6 +64,9 @@
         const page = [[${page}]];
         location.href = "/Member/list?page=" + page;
     };
+
+    const liker = [[${session.loginId}]];
+    const target = [[${member.id}]];
 
     let isLiked = false;
     let likeCount = 0;
@@ -128,9 +132,9 @@
     window.toggleLike = () => {
         $.ajax({
             type: "POST",
-            url: "/api/guidelikes/toggle",
+            url: "/api/member_likes/toggle",
             contentType: "application/json",
-            data: JSON.stringify({ "memberId": memberId, "AnotherMemberId": AnotherMemberId }),
+            data: JSON.stringify({ "liker": liker, "target": target }),
             success: function (res) {
                 likeCount += res === "Like added" ? 1 : -1;
                 $('#like-count').text(likeCount);
