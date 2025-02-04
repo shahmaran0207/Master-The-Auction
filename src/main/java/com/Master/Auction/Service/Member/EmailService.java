@@ -42,7 +42,7 @@ public class EmailService {
         ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
 
         context.setVariable("code", code);
-
+        System.out.println(code);
         templateResolver.setPrefix("templates/");
         templateResolver.setSuffix(".html");
         templateResolver.setTemplateMode(TemplateMode.HTML);
@@ -71,6 +71,7 @@ public class EmailService {
     // 인증코드 이메일 발송
     public void sendEmail(String toEmail) throws MessagingException {
         if (redisUtil.existData(toEmail)) {
+
             redisUtil.deleteData(toEmail);
         }
         // 이메일 폼 생성

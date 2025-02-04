@@ -11,5 +11,5 @@ public class MemberHateDTO {
 
     private Long id;
     private Long hater;
-    private Long target;
+    private Long targetHater;
 }

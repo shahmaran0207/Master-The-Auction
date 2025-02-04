@@ -1,5 +1,6 @@
 package com.Master.Auction.Controller.Member;
 
+import com.Master.Auction.Service.Member.MemberHateService;
 import com.Master.Auction.DTO.Member.MemberHateDTO;
 import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
@@ -8,23 +9,24 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/member_hates")
 @RequiredArgsConstructor
 public class MemberHateController {
+    private final MemberHateService memberHateService;
 
 
-    //   @PostMapping("/toggle")
-    //   public String toggleHate(@RequestBody MemberHateDTO memberHateDTO) {
-        //       return .toggleHate(memberHateDTO);
-        //  }
+       @PostMapping("/toggle")
+       public String toggleHate(@RequestBody MemberHateDTO memberHateDTO) {
+           return memberHateService.toggleHate(memberHateDTO);
+       }
 
-    //  @GetMapping("/count/{memberId}")
-    //  public int getHateCount(@PathVariable Long memberId) {
+      @GetMapping("/count/{target_hater}")
+      public int getHateCount(@PathVariable Long target_hater) {
 
-//        return .getHateCount(memberId);
-        //}
+        return memberHateService.getHateCount(target_hater);
+        }
 
-    //  @GetMapping("/status/{memberId}/{memberId}")
-    //   public boolean checkHateStatus(@PathVariable Long HaterId, @PathVariable Long targetId) {
-        //     return .isHatedByMember(HaterId, targetId);
-   // }
+      @GetMapping("/status/{target_hater}/{HaterId}")
+       public boolean checkHateStatus(@PathVariable Long HaterId, @PathVariable Long target_hater) {
+             return memberHateService.isHatedByMember(HaterId, target_hater);
+    }
 
 }
 

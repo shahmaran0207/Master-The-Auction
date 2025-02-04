@@ -10,7 +10,6 @@ import com.Master.Auction.DTO.Member.MemberLikeDTO;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 
-
 @Service
 @RequiredArgsConstructor
 public class MemberLikeService {
@@ -46,4 +45,19 @@ public class MemberLikeService {
             return "Like added";
         }
      }
+
+    public int getLikeCount(Long memberId) {
+        return memberLikeRepository.countByTarget(memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid member ID")));
+    }
+
+
+    public boolean isLikedByMember(Long target, Long liker) {
+        MemberEntity targetId = memberRepository.findById(target)
+                .orElseThrow(() -> new EntityNotFoundException("target not found with id: " + target));
+        MemberEntity likerId = memberRepository.findById(liker)
+                .orElseThrow(() -> new EntityNotFoundException("liker not found with id: " + liker));
+
+        return memberLikeRepository.existsByLikerAndTarget(likerId, targetId);
+    }
 }

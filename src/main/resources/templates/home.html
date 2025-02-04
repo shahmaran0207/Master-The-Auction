@@ -3,19 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta charset="utf-8">
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>MFA</title>
+    <title>MFA - Home</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
-<body id="top">
-<div class="min-h-screen flex flex-col">
-    <div th:replace="~{header :: header}"></div>
-    <main class="flex-1">
+<body class="bg-gray-900 text-white flex flex-col min-h-screen">
 
-    </main>
-</div>
+<!-- Header -->
+<div th:replace="~{header :: header}"></div>
+
+<!-- Main Content -->
+<main class="flex-1 flex flex-col items-center justify-center text-center p-6">
+
+    <h1 class="text-4xl font-bold text-yellow-400 drop-shadow-lg">🔥 Welcome to MFA Auctions! 🔥</h1>
+    <p class="mt-4 text-lg text-gray-300">Find exclusive items, bid, and sell with ease.</p>
+
+    <!-- Navigation Buttons -->
+    <div class="mt-8 flex flex-wrap justify-center gap-6">
+        <a href="/Auction/save" class="btn-gold text-xl">🛍️ Sell Your Items</a>
+        <a href="/Member/myPage" class="btn-gold text-xl">👤 My Account</a>
+        <a href="/auctions" class="btn-gold text-xl">🔥 Explore Auctions</a>
+    </div>
+
+    <!-- Featured Auctions -->
+    <div class="mt-12 w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="auction-card">
+            <div class="p-4">
+                <h2 class="text-xl font-bold text-yellow-400">Luxury Watch ⌚</h2>
+                <p class="text-gray-300">Starting at $500</p>
+            </div>
+        </div>
+        <div class="auction-card">
+            <div class="p-4">
+                <h2 class="text-xl font-bold text-yellow-400">Classic Car 🚗</h2>
+                <p class="text-gray-300">Starting at $20,000</p>
+            </div>
+        </div>
+        <div class="auction-card">
+            <div class="p-4">
+                <h2 class="text-xl font-bold text-yellow-400">Rare Painting 🎨</h2>
+                <p class="text-gray-300">Starting at $10,000</p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{footer :: footer}"></div>
 
 </body>
 </html>

@@ -53,8 +53,7 @@ public class MemberEntity {
     @OneToMany(mappedBy = "hater", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberHateEntity> hatedMembers = new ArrayList<>();
 
-    // 나를 좋아요한 회원들
-    @OneToMany(mappedBy = "target", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "targetHater", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberHateEntity> hatedByMembers = new ArrayList<>();
 
 

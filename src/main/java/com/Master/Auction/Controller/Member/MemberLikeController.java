@@ -18,16 +18,16 @@ public class MemberLikeController {
         return memberLikeService.toggleLike(memberLikeDTO);
     }
 
-    //   @GetMapping("/count/{memberId}")
-    //   public int getLikeCount(@PathVariable Long memberId) {
-//
-    //      return .getLikeCount(memberId);
-    //  }
+       @GetMapping("/count/{memberId}")
+       public int getLikeCount(@PathVariable Long memberId) {
 
-    //   @GetMapping("/status/{memberId}/{memberId}")
-    //   public boolean checkLikeStatus(@PathVariable Long LikerId, @PathVariable Long targetId) {
-    //      return .isLikedByMember(LikerId, targetId);
-    //  }
+          return memberLikeService.getLikeCount(memberId);
+      }
+
+     @GetMapping("/status/{targetId}/{LikerId}")
+     public boolean checkLikeStatus(@PathVariable Long LikerId, @PathVariable Long targetId) {
+        return memberLikeService.isLikedByMember(LikerId, targetId);
+     }
 
 }
 

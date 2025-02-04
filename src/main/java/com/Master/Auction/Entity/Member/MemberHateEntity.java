@@ -19,7 +19,13 @@ public class MemberHateEntity {
     private MemberEntity hater;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "target_id", nullable = false)
-    private MemberEntity target;
+    @JoinColumn(name = "targetHater", nullable = false)
+    private MemberEntity targetHater;
 
+    public static MemberHateEntity toSaveEntity(MemberEntity hater, MemberEntity target) {
+        MemberHateEntity memberHateEntity = new MemberHateEntity();
+        memberHateEntity.setHater(hater);
+        memberHateEntity.setTargetHater(target);
+        return memberHateEntity;
+    }
 }

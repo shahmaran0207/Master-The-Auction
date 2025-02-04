@@ -56,7 +56,18 @@
 
         </div>
     </div>
+
+    <div id="comment-write">
+        <input type="hidden" id="memberId" th:value="${session.loginId}">
+        <input type="text" id="commentWrite" th:value="${session.loginName}" th:readonly="true" placeholder="작성자">
+        <input type="text" id="commentContents" placeholder="내용">
+        <button id="comment-write-button" onclick="commentWrite()">댓글 작성</button>
+    </div>
+
+    <div id="comment-list">
+    </div>
 </main>
+<div th:replace="~{footer :: footer}"></div>
 </body>
 
 <script th:inline="javascript">
@@ -66,7 +77,9 @@
     };
 
     const liker = [[${session.loginId}]];
+    const hater = [[${session.loginId}]];
     const target = [[${member.id}]];
+    const targetHater = [[${member.id}]];
 
     let isLiked = false;
     let likeCount = 0;
@@ -75,6 +88,7 @@
     let hateCount = 0;
 
     $(document).ready(function () {
+        loadComments();
         loadLikes();
         loadHates();
     });
@@ -82,7 +96,7 @@
     const loadLikes = () => {
         $.ajax({
             type: "GET",
-            url: `/api/guidelikes/count/${guideId}`,
+            url: `/api/member_likes/count/${target}`,
             success: function (count) {
                 likeCount = count;
                 $('#like-count').text(likeCount);
@@ -94,7 +108,7 @@
 
         $.ajax({
             type: "GET",
-            url: `/api/guidelikes/status/${guideId}/${memberId}`,
+            url: `/api/member_likes/status/${target}/${liker}`,
             success: function (isLiked) {
                 $('#like-button').text(isLiked ? "👍 좋아요 취소" : "👍 좋아요");
             },
@@ -107,7 +121,7 @@
     const loadHates = () => {
         $.ajax({
             type: "GET",
-            url: `/api/guidehates/count/${guideId}`,
+            url: `/api/member_hates/count/${targetHater}`,
             success: function (count) {
                 hateCount = count;
                 $('#hate-count').text(hateCount);
@@ -119,7 +133,7 @@
 
         $.ajax({
             type: "GET",
-            url: `/api/guidehates/status/${guideId}/${memberId}`,
+            url: `/api/member_hates/status/${targetHater}/${hater}`,
             success: function (isHated) {
                 $('#hate-button').text(isHated ? "👎 싫어요 취소" : "👎 싫어요");
             },
@@ -149,9 +163,9 @@
     window.toggleHate = () => {
         $.ajax({
             type: "POST",
-            url: "/api/guidehates/toggle",
+            url: "/api/member_hates/toggle",
             contentType: "application/json",
-            data: JSON.stringify({ "guideId": guideId, "memberId": memberId }),
+            data: JSON.stringify({ "targetHater": targetHater, "hater": hater }),
             success: function (res) {
                 hateCount += res === "Hate added" ? 1 : -1;
                 $('#hate-count').text(hateCount);
@@ -161,6 +175,43 @@
                 console.log("싫어요 처리 실패", err);
             }
         });
+    };
+
+    const loadComments = () => {
+        const id = [[${member.id}]];
+
+        $.ajax({
+            type: "GET",
+            url: "/member_comment/list/" + id,
+            success: function (res) {
+                renderComments(res);
+            },
+            error: function (err) {
+                console.log("댓글 로드 실패", err);
+            }
+        });
+    };
+
+    const renderComments = (res) => {
+        let output = "<table>";
+        output += "<tr><th>댓글번호</th><th>작성자</th><th>내용</th><th>작성시간</th></tr>";
+        for (let i in res) {
+            output += "<tr>";
+            output += "<td>" + res[i].id + "</td>";
+            output += "<td>" + res[i].commentWriter + "</td>";
+            output += "<td>" + res[i].commentContents + "</td>";
+            output += "<td>" + res[i].commentCreatedTime + "</td>";
+            output += "</tr>";
+        }
+        output += "</table>";
+        document.getElementById('comment-list').innerHTML = output;
+    };
+
+    const commentWrite = () => {
+        const memberId = document.getElementById('memberId').value;
+        const writer = document.getElementById('commentWrite').value;
+        const contents = document.getElementById('commentContents').value;
+        const id = [[${member.id}]];
     };
 </script>
 </html>

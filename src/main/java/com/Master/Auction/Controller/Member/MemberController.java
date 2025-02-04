@@ -113,4 +113,27 @@ public class MemberController {
         model.addAttribute("page", pageable.getPageNumber());
         return "Member/detail";
     }
+
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable Long id, HttpSession session) {
+        String firebaseUid = (String) session.getAttribute("firebaseUid");
+
+        try {
+            if (firebaseUid != null) {
+                FirebaseAuth.getInstance().deleteUser(firebaseUid);
+            }
+        } catch (FirebaseAuthException e) {
+            e.printStackTrace();
+        }
+
+        session.removeAttribute("loginId");
+        session.removeAttribute("memberRole");
+        session.removeAttribute("firebaseUid");
+        session.removeAttribute("loginName");
+        session.removeAttribute("loginEmail");
+
+        memberService.deleteById(id);
+
+        return "redirect:/";
+    }
 }
