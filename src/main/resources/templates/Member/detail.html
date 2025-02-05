@@ -57,14 +57,14 @@
         </div>
     </div>
 
-    <div id="comment-write">
+    <div id="comment-write" style="margin-top: 3%;">
         <input type="hidden" id="memberId" th:value="${session.loginId}">
-        <input type="text" id="commentWrite" th:value="${session.loginName}" th:readonly="true" placeholder="작성자">
+        <input type="text" id="commentWrite" th:value="${session.loginName}" style="color: black" th:readonly="true" placeholder="작성자">
         <input type="text" id="commentContents" placeholder="내용">
-        <button id="comment-write-button" onclick="commentWrite()">댓글 작성</button>
+        <button id="comment-write-button" onclick="commentWrite()" class="btn-gold">댓글 작성</button>
     </div>
 
-    <div id="comment-list">
+    <div id="comment-list" style="width: 52%;">
     </div>
 </main>
 <div th:replace="~{footer :: footer}"></div>
@@ -212,6 +212,25 @@
         const writer = document.getElementById('commentWrite').value;
         const contents = document.getElementById('commentContents').value;
         const id = [[${member.id}]];
+        $.ajax({
+            type: "POST",
+            url: "/member_comment/save",
+            data: {
+                "memberId": memberId,
+                "commentWriter": writer,
+                "commentContents": contents,
+                "commentTargetId": id
+            },
+            success: function (res) {
+                console.log("댓글 저장 성공", res);
+                renderComments(res);
+                document.getElementById('commentContents').value = '';
+            },
+            error: function (err) {
+                console.log("댓글 저장 실패", err);
+            }
+        });
     };
+
 </script>
 </html>

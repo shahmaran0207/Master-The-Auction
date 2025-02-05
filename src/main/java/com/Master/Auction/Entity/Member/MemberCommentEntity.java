@@ -1,8 +1,7 @@
 package com.Master.Auction.Entity.Member;
 
-import java.time.LocalDateTime;
-
 import com.Master.Auction.DTO.Member.MemberCommentDTO;
+import java.time.LocalDateTime;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,13 +31,14 @@ public class MemberCommentEntity {
     private MemberEntity commentTarget;
 
     @Column
-    private LocalDateTime commentDate;
+    private LocalDateTime commentCreatedTime;
 
     public static MemberCommentEntity toSaveEntity(MemberCommentDTO commentDTO, MemberEntity target, MemberEntity memberEntity) {
         MemberCommentEntity commentEntity = new MemberCommentEntity();
         commentEntity.setCommentWriter(commentDTO.getCommentWriter());
         commentEntity.setCommentContents(commentDTO.getCommentContents());
         commentEntity.setCommentTarget(target);
+        commentEntity.setCommentCreatedTime(LocalDateTime.now());
         commentEntity.setCommenter(memberEntity);
         return commentEntity;
     }

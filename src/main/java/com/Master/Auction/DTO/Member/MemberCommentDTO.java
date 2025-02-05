@@ -1,8 +1,7 @@
 package com.Master.Auction.DTO.Member;
 
-import java.time.LocalDateTime;
-
 import com.Master.Auction.Entity.Member.MemberCommentEntity;
+import java.time.LocalDateTime;
 import lombok.ToString;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,7 +25,7 @@ public class MemberCommentDTO {
         commentDTO.setId(commentEntity.getId());
         commentDTO.setCommentWriter(commentEntity.getCommentWriter());
         commentDTO.setCommentContents(commentEntity.getCommentContents());
-        commentDTO.setCommentCreatedTime(commentEntity.getCommentDate());
+        commentDTO.setCommentCreatedTime(commentEntity.getCommentCreatedTime());
         commentDTO.setCommentTargetId(commentTargetId);
         return commentDTO;
     }

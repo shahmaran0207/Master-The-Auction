@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>MFA - 경매 물품 목록</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="flex flex-col min-h-screen">
+<div th:replace="~{header :: header}"></div>
+
+<main class="flex flex-col items-center flex-1 py-20">
+    <div class="w-full max-w-6xl auction-card">
+        <div class="auction-header text-xl">경매 물품</div>
+
+        <button class="btn-gold" style="align-items: center" onclick="saveReq()">글 작성</button>
+
+        <div class="p-6 flex-grow">
+
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Member_Name</th>
+                    <th>Member_Email</th>
+                    <th>Member_Birthday</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="member: ${memberList}">
+                    <td class="text-center" th:text="${member.id}"></td>
+                    <td style="text-align: center">
+                        <a th:href="@{|/Member/${member.id}|(page=${memberList.number + 1})}"
+                           th:text="${member.memberName}"
+                           class="text-yellow-300 hover:underline"></a>
+                    </td>
+                    <td class="text-center" th:text="${member.mail}"></td>
+                    <td class="text-center" th:text="${member.birthday}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination flex justify-center gap-2 mt-6 p-4">
+            <a th:href="@{/Member/paging(page=1)}" class="btn-gold">First</a>
+            <a th:href="${memberList.first} ? '#' : @{/Member/paging(page=${memberList.number})}" class="btn-gold">Prev</a>
+
+            <span th:each="page: ${#numbers.sequence(startPage, endPage)}" class="btn-gold">
+                <span th:if="${page == memberList.number + 1}" th:text="${page}" ></span>
+                <a th:unless="${page == memberList.number + 1}"
+                   th:href="@{/Member/paging(page=${page})}" th:text="${page}"></a>
+            </span>
+
+            <a th:href="${memberList.last} ? '#' : @{/Member/paging(page=${memberList.number + 2})}" class="btn-gold">Next</a>
+            <a th:href="@{/Member/paging(page=${memberList.totalPages})}" class="btn-gold">Last</a>
+        </div>
+    </div>
+</main>
+<div th:replace="~{footer :: footer}"></div>
+</body>
+
+<script>
+    const saveReq = () => {
+        location.href = "/Auction/save";
+    }
+</script>
+</html>
