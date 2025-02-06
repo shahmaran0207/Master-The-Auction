@@ -23,4 +23,12 @@ public class AuctionFileEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "auction_id")
     private AuctionEntity auctionEntity;
+
+    public static AuctionFileEntity toAuctionFileEntity(AuctionEntity auctionEntity, String originalFileName, String storedFileName) {
+        AuctionFileEntity auctionFileEntity = new AuctionFileEntity();
+        auctionFileEntity.setOriginalFileName(originalFileName);
+        auctionFileEntity.setStoredFileName(storedFileName);
+        auctionFileEntity.setAuctionEntity(auctionEntity);
+        return auctionFileEntity;
+    }
 }

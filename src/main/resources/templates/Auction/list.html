@@ -11,10 +11,10 @@
 <div th:replace="~{header :: header}"></div>
 
 <main class="flex flex-col items-center flex-1 py-20">
-    <div class="w-full max-w-6xl auction-card">
-        <div class="auction-header text-xl">경매 물품</div>
+    <div class="w-full max-w-7xl auction-card">
+    <div class="auction-header text-xl">경매 물품</div>
 
-        <button class="btn-gold" style="align-items: center" onclick="saveReq()">글 작성</button>
+        <button class="btn-gold" style="margin-top: 3%; margin-left: 45%; width: 10%; align-items: center" onclick="saveReq()">글 작성</button>
 
         <div class="p-6 flex-grow">
 
@@ -22,38 +22,50 @@
                 <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Member_Name</th>
-                    <th>Member_Email</th>
-                    <th>Member_Birthday</th>
+                    <th>물품 등록자</th>
+                    <th>경매 물품</th>
+                    <th>경매 물품 설명</th>
+                    <th>경매 마감 시간</th>
+                    <th>현재 입찰 최고가</th>
+                    <th>조회수</th>
+                    <th>경매 진행 상황</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="member: ${memberList}">
-                    <td class="text-center" th:text="${member.id}"></td>
+
+                <tr th:each="auction: ${AuctionList}">
+                    <td class="text-center" th:text="${auction.id}"></td>
                     <td style="text-align: center">
-                        <a th:href="@{|/Member/${member.id}|(page=${memberList.number + 1})}"
-                           th:text="${member.memberName}"
+                        <a th:href="@{|/Auction/${auction.id}|(page=${AuctionList.number + 1})}"
+                           th:text="${auction.memberName}"
                            class="text-yellow-300 hover:underline"></a>
                     </td>
-                    <td class="text-center" th:text="${member.mail}"></td>
-                    <td class="text-center" th:text="${member.birthday}"></td>
+                    <td class="text-center" th:text="${auction.auctionTitle}"></td>
+                    <td class="text-center" th:text="${auction.auctionContent}"></td>
+                    <td class="text-center" th:text="${auction.endTime}"></td>
+                    <td class="text-center" th:text="${auction.maxPrice}"></td>
+                    <td class="text-center" th:text="${auction.auctionHits}"></td>
+                    <td class="text-center">
+                        <span th:if="${auction.auctionStatus == 'not finished'}" style="color: green; font-weight: bold;">경매 진행 중</span>
+                        <span th:if="${auction.auctionStatus != 'not finished'}" style="color: red; font-weight: bold;">경매 종료</span>
+                    </td>
                 </tr>
                 </tbody>
             </table>
         </div>
 
         <div class="pagination flex justify-center gap-2 mt-6 p-4">
-            <a th:href="@{/Member/paging(page=1)}" class="btn-gold">First</a>
-            <a th:href="${memberList.first} ? '#' : @{/Member/paging(page=${memberList.number})}" class="btn-gold">Prev</a>
+            <a th:href="@{/Auction/paging(page=1)}" class="btn-gold">First</a>
+            <a th:href="${AuctionList.first} ? '#' : @{/Auction/paging(page=${AuctionList.number})}" class="btn-gold">Prev</a>
 
             <span th:each="page: ${#numbers.sequence(startPage, endPage)}" class="btn-gold">
-                <span th:if="${page == memberList.number + 1}" th:text="${page}" ></span>
-                <a th:unless="${page == memberList.number + 1}"
-                   th:href="@{/Member/paging(page=${page})}" th:text="${page}"></a>
+                <span th:if="${page == AuctionList.number + 1}" th:text="${page}" ></span>
+                <a th:unless="${page == AuctionList.number + 1}"
+                   th:href="@{/Auction/paging(page=${page})}" th:text="${page}"></a>
             </span>
 
-            <a th:href="${memberList.last} ? '#' : @{/Member/paging(page=${memberList.number + 2})}" class="btn-gold">Next</a>
-            <a th:href="@{/Member/paging(page=${memberList.totalPages})}" class="btn-gold">Last</a>
+            <a th:href="${AuctionList.last} ? '#' : @{/Auction/paging(page=${AuctionList.number + 2})}" class="btn-gold">Next</a>
+            <a th:href="@{/Auction/paging(page=${AuctionList.totalPages})}" class="btn-gold">Last</a>
         </div>
     </div>
 </main>

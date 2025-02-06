@@ -18,27 +18,27 @@
         </div>
 
         <form action="/Auction/save" method="post" enctype="multipart/form-data" class="flex flex-col space-y-4 p-6">
-            <label for="title" class="text-lg font-semibold">제목</label>
-            <input type="text" id="title" name="title" placeholder="제목을 입력하세요"
+            <label for="AuctionTitle" class="text-lg font-semibold">제목</label>
+            <input type="text" id="AuctionTitle" name="AuctionTitle" placeholder="제목을 입력하세요"
                    class="p-2 rounded bg-gray-800 border border-gray-600 text-white">
 
-            <label for="content" class="text-lg font-semibold">내용</label>
-            <textarea id="content" name="content" cols="30" rows="5" placeholder="내용을 입력하세요"
+            <label for="AuctionContent" class="text-lg font-semibold">내용</label>
+            <textarea id="AuctionContent" name="AuctionContent" cols="30" rows="5" placeholder="내용을 입력하세요"
                       class="p-2 rounded bg-gray-800 border border-gray-600 text-white"></textarea>
 
-            <label for="startPrice" class="text-lg font-semibold">시작가 (₩)</label>
-            <input type="number" id="startPrice" name="startPrice" placeholder="시작가를 입력하세요"
+            <label for="StartPrice" class="text-lg font-semibold">시작가 (₩)</label>
+            <input type="number" id="StartPrice" name="StartPrice" placeholder="시작가를 입력하세요"
                    class="p-2 rounded bg-gray-800 border border-gray-600 text-white">
 
             <label class="text-lg font-semibold">경매 종료 날짜 및 시간</label>
             <div class="flex space-x-2">
-                <input type="date" id="endDate" name="endDate"
-                       class="p-2 rounded bg-gray-800 border border-gray-600 text-white">
-                <select id="endTime" name="endTime" class="p-2 rounded bg-gray-800 border border-gray-600 text-white"></select>
+                <input type="date" id="endDate" name="endDate" class="p-2 rounded bg-gray-800 border border-gray-600 text-white">
+                <select id="endTimePicker" name="endTimePicker" class="p-2 rounded bg-gray-800 border border-gray-600 text-white"></select>
             </div>
 
+
             <label for="AuctionImage" class="text-lg font-semibold">파일 첨부</label>
-            <input type="file" id="AuctionImage" name="boardFile"
+            <input type="file" id="AuctionImage" name="AuctionImage"
                    class="p-2 rounded bg-gray-800 border border-gray-600 text-white">
 
             <input type="submit" value="글 작성" class="btn-gold cursor-pointer">
@@ -55,7 +55,7 @@
         let tomorrow = now.toISOString().split('T')[0];
 
         let endDateInput = document.getElementById("endDate");
-        let endTimeSelect = document.getElementById("endTime");
+        let endTimeSelect = document.getElementById("endTimePicker");
 
         endDateInput.min = tomorrow;
 
@@ -66,6 +66,7 @@
             }
         }
     });
+
 </script>
 
 </body>
