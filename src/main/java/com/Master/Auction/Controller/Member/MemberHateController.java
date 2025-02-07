@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 public class MemberHateController {
     private final MemberHateService memberHateService;
 
-
        @PostMapping("/toggle")
        public String toggleHate(@RequestBody MemberHateDTO memberHateDTO) {
            return memberHateService.toggleHate(memberHateDTO);
@@ -27,6 +26,4 @@ public class MemberHateController {
        public boolean checkHateStatus(@PathVariable Long HaterId, @PathVariable Long target_hater) {
              return memberHateService.isHatedByMember(HaterId, target_hater);
     }
-
 }
-

@@ -31,8 +31,9 @@ public class MemberCommentService {
     }
 
     public Long save(MemberCommentDTO commentDTO) {
+        System.out.println(commentDTO);
         Optional<MemberEntity> optionalCommentTarget = memberRepository.findById(commentDTO.getCommentTargetId());
-        Optional<MemberEntity> optionalCommenter = memberRepository.findById(commentDTO.getCommentTargetId());
+        Optional<MemberEntity> optionalCommenter = memberRepository.findById(commentDTO.getMemberId());
 
         if (optionalCommentTarget.isPresent() && optionalCommenter.isPresent()) {
             MemberEntity targetEntity = optionalCommentTarget.get();

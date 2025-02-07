@@ -13,9 +13,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Page;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import java.time.LocalDateTime;
 import java.io.IOException;
+import java.util.Optional;
 import java.io.File;
 
 @Service
@@ -35,7 +37,7 @@ public class AuctionService {
         Page<AuctionDTO> auctionDTOS = boardEntities.map(auction ->
                 new AuctionDTO(auction.getId(), auction.getAuctionTitle(), auction.getAuctionContents(),auction.getStartTime(),
                         auction.getEndTime(), auction.getStartPrice(), auction.getMinPrice(), auction.getMaxPrice(),
-                        auction.getAuctionHits(), auction.getMemberEntity().getMemberName(), auction.getAuctionStatus()));
+                        auction.getAuctionHits(), auction.getMemberEntity().getMemberName(), auction.getAuctionStatus(), auction.getMemberEntity().getId()));
         return auctionDTOS;
     }
 
@@ -59,6 +61,22 @@ public class AuctionService {
 
             AuctionFileEntity auctionFileEntity = AuctionFileEntity.toAuctionFileEntity(savedAuctionEntity, originalFilename, storedFileName);
             auctionFileRepository.save(auctionFileEntity);
+        }
+    }
+
+    @Transactional
+    public void updateHits(Long id) {
+        auctionRepository.updateHits(id);
+    }
+
+    @Transactional
+    public AuctionDTO findById(Long id) {
+        Optional<AuctionEntity> optionalBoardEntity = auctionRepository.findById(id);
+        if (optionalBoardEntity.isPresent()) {
+            AuctionEntity boardEntity = optionalBoardEntity.get();
+            return AuctionDTO.toAuctionDTO(boardEntity);
+        } else {
+            return null;
         }
     }
 }

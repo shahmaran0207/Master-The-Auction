@@ -12,21 +12,17 @@ import java.io.IOException;
 
 @Configuration
 public class FirebaseConfig {
-
     private static final Logger logger = Logger.getLogger(FirebaseConfig.class.getName());
 
     @PostConstruct
     public void init() {
         try {
-            // Firebase 서비스 계정 JSON 파일 경로
             ClassPathResource resource = new ClassPathResource("service.json");
 
-            // Firebase 옵션 설정
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(resource.getInputStream()))
                     .build();
 
-            // FirebaseApp이 존재하지 않으면 초기화
             if (FirebaseApp.getApps().isEmpty()) {
                 FirebaseApp.initializeApp(options);
                 logger.info("FirebaseApp initialized successfully.");

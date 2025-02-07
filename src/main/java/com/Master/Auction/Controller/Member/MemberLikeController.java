@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/member_likes")
 @RequiredArgsConstructor
 public class MemberLikeController {
-
     private final MemberLikeService memberLikeService;
 
     @PostMapping("/toggle")
@@ -30,4 +29,3 @@ public class MemberLikeController {
      }
 
 }
-

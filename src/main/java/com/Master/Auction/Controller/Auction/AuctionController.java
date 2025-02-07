@@ -1,8 +1,8 @@
 package com.Master.Auction.Controller.Auction;
 
-import org.springframework.web.bind.annotation.*;
 import com.Master.Auction.Service.Auction.AuctionService;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 import com.Master.Auction.DTO.Auction.AuctionDTO;
 import org.springframework.data.domain.Pageable;
@@ -10,8 +10,8 @@ import org.springframework.data.domain.Page;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ui.Model;
-import java.io.IOException;
 import java.time.LocalDateTime;
+import java.io.IOException;
 
 @Controller
 @RequiredArgsConstructor
@@ -29,8 +29,6 @@ public class AuctionController {
                        @RequestParam("endDate") String endDate,
                        @RequestParam("endTimePicker") String endTimePicker,
                        HttpSession session) throws IOException {
-        // endDate: "2025-02-07", endTimePicker: "00:00"
-        // ISO-8601 형식("yyyy-MM-ddTHH:mm")으로 파싱하기 위해 날짜와 시간 문자열을 합칩니다.
         LocalDateTime endDateTime = LocalDateTime.parse(endDate + "T" + endTimePicker);
         auctionDTO.setEndTime(endDateTime);
 
@@ -39,7 +37,6 @@ public class AuctionController {
         auctionService.save(auctionDTO, endDateTime, id);
         return "home";
     }
-
 
     @GetMapping("/list")
     public String paging(@PageableDefault(page = 1) Pageable pageable, Model model) {
@@ -52,5 +49,17 @@ public class AuctionController {
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
         return "Auction/list";
+    }
+
+    @GetMapping("/{id}")
+    public String findById(@PathVariable Long id, Model model,
+                           @PageableDefault(page=1) Pageable pageable) {
+        auctionService.updateHits(id);
+
+        AuctionDTO auctionDTO = auctionService.findById(id);
+
+        model.addAttribute("auction", auctionDTO);
+        model.addAttribute("page", pageable.getPageNumber());
+        return "Auction/detail";
     }
 }

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>MFA - Auction Detail Page</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="flex flex-col min-h-screen bg-gray-900 text-gray-300">
+<div th:replace="~{header :: header}"></div>
+
+<main class="flex flex-col items-center flex-1 py-12">
+    <div class="w-full max-w-4xl auction-card">
+        <div class="auction-header text-2xl font-bold tracking-wide">
+            상품명: <span th:text="${auction.auctionTitle}"></span>
+        </div>
+
+        <div class="p-6 flex flex-col items-center">
+            <div class="profile-image-container mb-6" th:if="${auction.fileAttached == 1}">
+                <img th:src="@{|/Auction/${auction.storedFileName}|}" alt="Profile Image" class="profile-image">
+            </div>
+
+            <table class="w-full table-fixed text-lg border-separate border-spacing-2">
+                <tbody>
+                <tr>
+                    <th>ID</th>
+                    <td th:text="${auction.id}"></td>
+                </tr>
+                <tr>
+                    <th>경매 물품</th>
+                    <td th:text="${auction.auctionTitle}"></td>
+                </tr>
+                <tr>
+                    <th>경매 물품 설명</th>
+                    <td th:text="${auction.auctionContent}"></td>
+                </tr>
+                <tr>
+                    <th>경매 물품 판매자</th>
+                    <td th:text="${auction.memberName}"></td>
+                </tr>
+                <tr>
+                    <th>경매 마감 시간</th>
+                    <td th:text="${auction.endTime}"></td>
+                </tr>
+                <tr>
+                    <th>현재 최고 입찰가</th>
+                    <td th:text="${auction.maxPrice}"></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <br>
+            <button onclick="listReq()" class="btn-gold">목록</button>
+
+        </div>
+    </div>
+
+</main>
+<div th:replace="~{footer :: footer}"></div>
+</body>
+
+<script th:inline="javascript">
+    const listReq = () => {
+        const page = [[${page}]];
+        location.href = "/Auction/list?page=" + page;
+    };
+</script>
+</html>
