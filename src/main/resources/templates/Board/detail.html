@@ -49,7 +49,7 @@
                 </tbody>
             </table>
 
-            <div class="button-container flex items-center space-x-4">
+            <div class="button-container flex items-center space-x-4" style="margin-top: 3%;">
                 <button id="like-button" onclick="toggleLike()" class="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600">
                     👍 좋아요
                 </button>
@@ -63,7 +63,13 @@
             </div>
 
             <br>
-            <button onclick="listReq()" class="btn-gold">목록</button>
+            <div class="flex items-center space-x-4">
+                <button onclick="listReq()" class="btn-gold">목록</button>
+                <th:block th:if="${board.memberId == session.loginId}">
+                    <button id="checkoutBtn" onclick="deleteBoard()" class="btn-gold">삭제</button>
+                    <button  onclick="updateReq()" class="btn-gold">수정</button>
+                </th:block>
+            </div>
 
         </div>
     </div>
@@ -82,11 +88,44 @@
 </body>
 
 <script th:inline="javascript">
+    let isLiked = false;
+    let likeCount = 0;
+
+    let isHated = false;
+    let hateCount = 0;
+
+    const boardId = [[${board.id}]];
+    const memberId = [[${session.loginId}]];
+
     const listReq = () => {
         const page = [[${page}]];
         location.href = "/Board/list?page=" + page;
     };
 
+    const deleteBoard = () => {
+        const boardId = [[${board.id}]];
+        location.href = "/Board/delete/"+ boardId;
+    };
+
+    const updateReq = () => {
+        const id = [[${board.id}]];
+        location.href = "/Board/update/" + id;
+    };
+
+    const loadComments = () => {
+        const boardId = [[${board.id}]]; // 현재 게시글 ID
+        $.ajax({
+            type: "GET",
+            url: "/board_comment/list/" + boardId, // 댓글 목록을 가져오는 API
+            success: function (res) {
+                console.log("댓글 목록 가져오기 성공", res);
+                renderComments(res);
+            },
+            error: function (err) {
+                console.log("댓글 목록 가져오기 실패", err);
+            }
+        });
+    };
 
     const renderComments = (res) => {
         let output = "<table>";
@@ -129,6 +168,94 @@
         });
     };
 
+    $(document).ready(function () {
+        loadComments();
+        loadLikes();
+        loadHates();
+    });
 
+    const loadLikes = () => {
+        $.ajax({
+            type: "GET",
+            url: `/api/board_likes/count/${boardId}`,
+            success: function (count) {
+                likeCount = count;
+                $('#like-count').text(likeCount);
+            },
+            error: function (err) {
+                console.log("좋아요 수 로드 실패", err);
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: `/api/board_likes/status/${boardId}/${memberId}`,
+            success: function (isLiked) {
+                $('#like-button').text(isLiked ? "👍 좋아요 취소" : "👍 좋아요");
+            },
+            error: function (err) {
+                console.log("좋아요 상태 로드 실패", err);
+            }
+        });
+    };
+
+    const loadHates = () => {
+        $.ajax({
+            type: "GET",
+            url: `/api/board_hates/count/${boardId}`,
+            success: function (count) {
+                hateCount = count;
+                $('#hate-count').text(hateCount);
+            },
+            error: function (err) {
+                console.log("싫어요 수 로드 실패", err);
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: `/api/board_hates/status/${boardId}/${memberId}`,
+            success: function (isHated) {
+                $('#hate-button').text(isHated ? "👎 싫어요 취소" : "👎 싫어요");
+            },
+            error: function (err) {
+                console.log("싫어요 상태 로드 실패", err);
+            }
+        });
+    };
+
+    window.toggleLike = () => {
+        $.ajax({
+            type: "POST",
+            url: "/api/board_likes/toggle",
+            contentType: "application/json",
+            data: JSON.stringify({ "boardId": boardId, "memberId": memberId }),
+            success: function (res) {
+                likeCount += res === "Like added" ? 1 : -1;
+                $('#like-count').text(likeCount);
+                $('#like-button').text(res === "Like added" ? "👍 좋아요 취소" : "👍 좋아요");
+            },
+            error: function (err) {
+                console.log("좋아요 처리 실패", err);
+            }
+        });
+    };
+
+    window.toggleHate = () => {
+        $.ajax({
+            type: "POST",
+            url: "/api/board_hates/toggle",
+            contentType: "application/json",
+            data: JSON.stringify({ "boardId": boardId, "memberId": memberId }),
+            success: function (res) {
+                hateCount += res === "Hate added" ? 1 : -1;
+                $('#hate-count').text(hateCount);
+                $('#hate-button').text(res === "Hate added" ? "👎 싫어요 취소" : "👎 싫어요");
+            },
+            error: function (err) {
+                console.log("싫어요 처리 실패", err);
+            }
+        });
+    };
 </script>
 </html>

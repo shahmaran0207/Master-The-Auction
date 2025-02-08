@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>MFA - 자유게시판 수정</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="flex flex-col min-h-screen bg-gray-900 text-gray-300">
+<div th:replace="~{header :: header}"></div>
+
+<main class="flex flex-col items-center flex-1 py-12">
+    <div class="w-full max-w-4xl auction-card">
+        <div class="auction-header text-2xl font-bold tracking-wide text-center">
+            자유게시판 수정
+        </div>
+
+        <form action="/Board/update" method="post" enctype="multipart/form-data" class="flex flex-col space-y-4 p-6">
+            <label for="boardTitle" class="text-lg font-semibold">제목</label>
+            <input type="text" id="boardTitle" name="boardTitle" placeholder="제목을 입력하세요"
+                   class="p-2 rounded bg-gray-800 border border-gray-600 text-white">
+
+            <label for="boardPass" class="text-lg font-semibold">게시판 암호</label>
+            <input type="password" id="boardPass" name="boardPass" placeholder="게시판 암호 작성"
+                   class="p-2 rounded bg-gray-800 border border-gray-600 text-white">
+
+            <label for="boardContents" class="text-lg font-semibold">내용</label>
+            <textarea id="boardContents" name="boardContents" cols="30" rows="5" placeholder="내용을 입력하세요"
+                      class="p-2 rounded bg-gray-800 border border-gray-600 text-white"></textarea>
+
+            <label for="boardFile" class="text-lg font-semibold">파일 첨부</label>
+            <input type="file" id="boardFile" name="boardFile"
+                   class="p-2 rounded bg-gray-800 border border-gray-600 text-white">
+
+            <input type="hidden" name="id" th:value="${boardUpdate.id}">
+            <input type="hidden" name="boardHits" th:value="${boardUpdate.boardHits}">
+            <input type="hidden" name="likesCount" th:value="${boardUpdate.likesCount}">
+            <input type="hidden" name="hatesCount" th:value="${boardUpdate.hatesCount}">
+            <input type="submit" value="글 수정" class="btn-gold cursor-pointer" onclick="boardUpdate()">
+        </form>
+    </div>
+</main>
+
+<div th:replace="~{footer :: footer}"></div>
+
+<script>
+    const boardUpdate = () => {
+        const pass = [[${boardUpdate.boardPass}]];
+        const inputPass = document.getElementById("boardPass").value;
+        if (pass == inputPass) {
+            document.updateForm.submit();
+        } else {
+            alert("비밀번호가 일치하지 않습니다!");
+        }
+    }
+</script>
+</body>
+</html>

@@ -53,8 +53,8 @@ public class BoardDTO {
         boardDTO.setBoardUpdatedTime(boardEntity.getBoardUpdatedTime());
         boardDTO.setLikesCount((boardEntity.getLikesCount()));
         boardDTO.setHatesCount(boardEntity.getHatesCount());
-
         boardDTO.setMemberName(boardEntity.getMemberEntity().getMemberName());
+        boardDTO.setMemberId(boardEntity.getMemberEntity().getId());
 
         if (boardEntity.getFileAttached() == 0) {
             boardDTO.setFileAttached(boardEntity.getFileAttached());

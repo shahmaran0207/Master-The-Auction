@@ -103,4 +103,32 @@ public class BoardEntity {
         boardEntity.setMemberEntity(memberEntity);
         return boardEntity;
     }
+
+    public static BoardEntity toUpdateEntity(BoardDTO boardDTO, MemberEntity memberEntity) {
+        BoardEntity boardEntity = new BoardEntity();
+        boardEntity.setId(boardDTO.getId());
+        boardEntity.setBoardPass(boardDTO.getBoardPass());
+        boardEntity.setBoardTitle(boardDTO.getBoardTitle());
+        boardEntity.setBoardContents(boardDTO.getBoardContents());
+        boardEntity.setBoardHits(boardDTO.getBoardHits());
+        boardEntity.setLikesCount(boardDTO.getLikesCount());
+        boardEntity.setHatesCount(boardDTO.getHatesCount());
+        boardEntity.setMemberEntity(memberEntity);
+        return boardEntity;
+    }
+
+    public static BoardEntity toUpdateFileEntity(BoardDTO boardDTO, MemberEntity memberEntity) {
+        BoardEntity boardEntity = new BoardEntity();
+        boardEntity.setId(boardDTO.getId());
+        boardEntity.setBoardPass(boardDTO.getBoardPass());
+        boardEntity.setBoardTitle(boardDTO.getBoardTitle());
+        boardEntity.setBoardContents(boardDTO.getBoardContents());
+        boardEntity.setBoardUpdatedTime(LocalDateTime.now());
+        boardEntity.setBoardHits(boardDTO.getBoardHits());
+        boardEntity.setLikesCount(boardDTO.getLikesCount());
+        boardEntity.setHatesCount(boardDTO.getHatesCount());
+        boardEntity.setFileAttached(1);
+        boardEntity.setMemberEntity(memberEntity);
+        return boardEntity;
+    }
 }

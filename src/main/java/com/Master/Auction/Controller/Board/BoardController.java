@@ -1,12 +1,12 @@
 package com.Master.Auction.Controller.Board;
 
-import com.Master.Auction.DTO.Board.CommentDTO;
-import com.Master.Auction.Service.Board.BoardService;
 import com.Master.Auction.Service.Board.CommentService;
+import com.Master.Auction.Service.Board.BoardService;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.data.domain.Pageable;
+import com.Master.Auction.DTO.Board.CommentDTO;
 import com.Master.Auction.DTO.Board.BoardDTO;
 import org.springframework.data.domain.Page;
 import jakarta.servlet.http.HttpSession;
@@ -59,4 +59,24 @@ public class BoardController {
         return "Board/detail";
     }
 
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable Long id) {
+        boardService.delete(id);
+        return "redirect:/Board/list";
+    }
+
+    @GetMapping("/update/{id}")
+    public String updateForm(@PathVariable Long id, Model model) {
+        BoardDTO boardDTO = boardService.findById(id);
+        model.addAttribute("boardUpdate", boardDTO);
+        return "Board/update";
+    }
+
+    @PostMapping("/update")
+    public String update(@ModelAttribute BoardDTO boardDTO, HttpSession session, Model model) throws IOException {
+        Long memberId = (Long) session.getAttribute("loginId");
+        BoardDTO board = boardService.update(boardDTO, memberId);
+        model.addAttribute("board", board);
+        return "Board/detail";
+    }
 }
