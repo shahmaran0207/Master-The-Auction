@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>MFA - 고객 문의 사항</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="flex flex-col min-h-screen">
+<div th:replace="~{header :: header}"></div>
+
+<main class="flex flex-col items-center flex-1 py-20">
+    <div class="w-full max-w-7xl auction-card">
+        <div class="auction-header text-xl">QnA</div>
+
+        <button class="btn-gold" style="margin-top: 3%; margin-left: 45%; width: 10%; align-items: center" onclick="saveReq()">글 작성</button>
+
+        <div class="p-6 flex-grow">
+
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>문의 사항 작성자</th>
+                    <th>문의 사항</th>
+                    <th>문의 작성시간</th>
+                    <th>문의 조회수</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <tr th:each="question: ${questionEntityList}">
+                    <td class="text-center" th:text="${question.id}"></td>
+                    <td style="text-align: center">
+                        <a th:href="@{|/QnA/${question.id}|(page=${questionEntityList.number + 1})}"
+                           th:text="${question.memberName}"
+                           class="text-yellow-300 hover:underline"></a>
+                    </td>
+                    <td class="text-center" th:text="${question.title}"></td>
+                    <td class="text-center" th:text="${question.createDate}"></td>
+                    <td class="text-center" th:text="${question.questionhits}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination flex justify-center gap-2 mt-6 p-4">
+            <a th:href="@{/QnA/paging(page=1)}" class="btn-gold">First</a>
+            <a th:href="${questionEntityList.first} ? '#' : @{/QnA/paging(page=${questionEntityList.number})}" class="btn-gold">Prev</a>
+
+            <span th:each="page: ${#numbers.sequence(startPage, endPage)}" class="btn-gold">
+                <span th:if="${page == questionEntityList.number + 1}" th:text="${page}" ></span>
+                <a th:unless="${page == questionEntityList.number + 1}"
+                   th:href="@{/QnA/paging(page=${page})}" th:text="${page}"></a>
+            </span>
+
+            <a th:href="${questionEntityList.last} ? '#' : @{/QnA/paging(page=${AuctionList.number + 2})}" class="btn-gold">Next</a>
+            <a th:href="@{/QnA/paging(page=${questionEntityList.totalPages})}" class="btn-gold">Last</a>
+        </div>
+    </div>
+</main>
+<div th:replace="~{footer :: footer}"></div>
+</body>
+
+<script>
+    const saveReq = () => {
+        location.href = "/QnA/save";
+    }
+</script>
+</html>
