@@ -7,7 +7,6 @@ import com.Master.Auction.Interceptor.LoginInterceptor;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-
     private final LoginInterceptor loginInterceptor;
 
     public WebConfig(LoginInterceptor loginInterceptor) {

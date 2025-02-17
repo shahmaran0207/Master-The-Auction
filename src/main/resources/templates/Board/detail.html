@@ -65,9 +65,9 @@
             <br>
             <div class="flex items-center space-x-4">
                 <button onclick="listReq()" class="btn-gold">목록</button>
-                <th:block th:if="${board.memberId == session.loginId}">
+                <th:block th:if="${board.memberId.toString() == loginId}">
                     <button id="checkoutBtn" onclick="deleteBoard()" class="btn-gold">삭제</button>
-                    <button  onclick="updateReq()" class="btn-gold">수정</button>
+                    <button onclick="updateReq()" class="btn-gold">수정</button>
                 </th:block>
             </div>
 
@@ -75,8 +75,8 @@
     </div>
 
     <div id="comment-write" style="margin-top: 3%;">
-        <input type="hidden" id="memberId" th:value="${session.loginId}">
-        <input type="text" id="commentWrite" th:value="${session.loginName}" style="color: black" th:readonly="true" placeholder="작성자">
+        <input type="hidden" id="memberId" th:value="${loginId}">
+        <input type="text" id="commentWrite" th:value="${loginName}" style="color: black" th:readonly="true" placeholder="작성자">
         <input type="text" id="commentContents" placeholder="내용">
         <button id="comment-write-button" onclick="commentWrite()" class="btn-gold">댓글 작성</button>
     </div>
@@ -88,6 +88,7 @@
 </body>
 
 <script th:inline="javascript">
+
     let isLiked = false;
     let likeCount = 0;
 
@@ -95,7 +96,7 @@
     let hateCount = 0;
 
     const boardId = [[${board.id}]];
-    const memberId = [[${session.loginId}]];
+    const loginId = /*[[${loginId}]]*/ "";
 
     const listReq = () => {
         const page = [[${page}]];
@@ -143,7 +144,7 @@
     };
 
     const commentWrite = () => {
-        const memberId = document.getElementById('memberId').value;
+        const memberId = /*[[${loginId}]]*/ "";
         const writer = document.getElementById('commentWrite').value;
         const contents = document.getElementById('commentContents').value;
         const id = [[${board.id}]];
@@ -224,6 +225,7 @@
         });
     };
 
+    const memberId = /*[[${loginId}]]*/ "";
     window.toggleLike = () => {
         $.ajax({
             type: "POST",

@@ -7,11 +7,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.data.domain.Pageable;
 import com.Master.Auction.DTO.Board.CommentDTO;
+import jakarta.servlet.http.HttpServletRequest;
 import com.Master.Auction.DTO.Board.BoardDTO;
 import org.springframework.data.domain.Page;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ui.Model;
+import jakarta.servlet.http.Cookie;
 import java.io.IOException;
 import java.util.List;
 
@@ -41,42 +42,62 @@ public class BoardController {
     }
 
     @PostMapping("/save")
-    public String save(@ModelAttribute BoardDTO boardDTO, HttpSession session) throws IOException {
-        Long id = (Long) session.getAttribute("loginId");
+    public String save(@ModelAttribute BoardDTO boardDTO, HttpServletRequest request) throws IOException {
+        String loginId = getCookieValue(request, "loginId");
+        Long id = (loginId != null) ? Long.valueOf(loginId) : null;
         boardService.save(boardDTO, id);
         return "home";
     }
 
     @GetMapping("/{id}")
-    public String findById(@PathVariable Long id, Model model,
-                           @PageableDefault(page=1) Pageable pageable) {
+    public String findById(@CookieValue(value = "loginId", defaultValue = "") String loginId, @CookieValue(value = "loginName", defaultValue = "") String loginName,
+                           @PathVariable Long id, Model model, @PageableDefault(page=1) Pageable pageable) {
         boardService.updateHits(id);
         BoardDTO boardDTO = boardService.findById(id);
+        model.addAttribute("loginId", loginId);
+        model.addAttribute("loginName", loginName);
         List<CommentDTO> commentDTOList = commentService.findAll(id);
         model.addAttribute("commentList", commentDTOList);
         model.addAttribute("board", boardDTO);
         model.addAttribute("page", pageable.getPageNumber());
+
         return "Board/detail";
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Long id) {
+    public String delete(@CookieValue(value = "loginId", defaultValue = "") String loginId, @PathVariable Long id) {
         boardService.delete(id);
         return "redirect:/Board/list";
     }
 
     @GetMapping("/update/{id}")
-    public String updateForm(@PathVariable Long id, Model model) {
+    public String updateForm(@CookieValue(value = "loginId", defaultValue = "") String loginId, @PathVariable Long id, Model model) {
+        model.addAttribute("loginId", loginId);
         BoardDTO boardDTO = boardService.findById(id);
         model.addAttribute("boardUpdate", boardDTO);
         return "Board/update";
     }
 
     @PostMapping("/update")
-    public String update(@ModelAttribute BoardDTO boardDTO, HttpSession session, Model model) throws IOException {
-        Long memberId = (Long) session.getAttribute("loginId");
+    public String update(@ModelAttribute BoardDTO boardDTO, HttpServletRequest request,
+                         Model model) throws IOException {
+        String loginId = getCookieValue(request, "loginId");
+        Long memberId = (loginId != null) ? Long.valueOf(loginId) : null;
         BoardDTO board = boardService.update(boardDTO, memberId);
+
+        model.addAttribute("loginId", loginId);
         model.addAttribute("board", board);
         return "Board/detail";
+    }
+
+    private String getCookieValue(HttpServletRequest request, String cookieName) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if (cookieName.equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
     }
 }

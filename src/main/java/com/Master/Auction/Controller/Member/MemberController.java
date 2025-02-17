@@ -6,7 +6,9 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Pageable;
+import jakarta.servlet.http.HttpServletResponse;
 import com.Master.Auction.DTO.Member.MemberDTO;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.FirebaseAuth;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.Page;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ui.Model;
+import jakarta.servlet.http.Cookie;
 import java.io.IOException;
 import java.util.Map;
 
@@ -48,42 +51,89 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody Map<String, String> request, HttpSession session) {
+    public ResponseEntity<String> login(@RequestBody Map<String, String> request, HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
         String idToken = request.get("idToken");
         try {
+            // 1. 쿠키에서 기존 로그인 상태 확인
+            String existingLoginId = getCookieValue(httpRequest, "loginId");
+            if (existingLoginId != null) {
+                // 이미 로그인 상태라면 새로 로그인하지 않고 바로 성공 응답
+                return ResponseEntity.ok("/"); // 이미 로그인된 사용자
+            }
+
+            // 2. Firebase 토큰 검증
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
 
             String email = decodedToken.getEmail();
             String firebaseUid = decodedToken.getUid();
 
+            // 3. 사용자 정보 조회
             MemberDTO memberDTO = memberService.login(email);
 
-            session.setAttribute("loginId", memberDTO.getId());
-            session.setAttribute("memberRole", memberDTO.getRole());
-            session.setAttribute("loginEmail", memberDTO.getMail());
-            session.setAttribute("loginName", memberDTO.getMemberName());
-            session.setAttribute("firebaseUid", firebaseUid);
+            // 4. HttpOnly 쿠키로 사용자 정보 저장
+            setHttpOnlyCookie(httpResponse, "loginId", memberDTO.getId().toString());
+            setHttpOnlyCookie(httpResponse, "memberRole", String.valueOf(memberDTO.getRole()));
+            setHttpOnlyCookie(httpResponse, "loginEmail", memberDTO.getMail());
+            setHttpOnlyCookie(httpResponse, "loginName", memberDTO.getMemberName());
+            setHttpOnlyCookie(httpResponse, "firebaseUid", firebaseUid);
 
-            return ResponseEntity.ok("/");
+            System.out.println(memberDTO.getId().toString());
+
+            return ResponseEntity.ok("/"); // 로그인 성공
         } catch (Exception e) {
-            return ResponseEntity.status(401).body("/Member/login");
+            return ResponseEntity.status(401).body("/Member/login"); // 로그인 실패
         }
     }
 
+    // 쿠키에서 값을 가져오는 유틸리티 메서드
+    @GetMapping("/")
+    public String home(HttpServletRequest request, Model model) {
+        // 쿠키에서 로그인 상태 확인
+        String loginId = getCookieValue(request, "loginId");
+
+        // 로그인 여부를 모델에 전달
+        model.addAttribute("isLoggedIn", loginId != null);
+
+        return "home"; // 렌더링할 Thymeleaf 뷰 이름
+    }
+
+    private String getCookieValue(HttpServletRequest request, String cookieName) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if (cookieName.equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    // HttpOnly 쿠키 설정 유틸리티 메서드
+    private void setHttpOnlyCookie(HttpServletResponse response, String name, String value) {
+        Cookie cookie = new Cookie(name, value);
+        cookie.setHttpOnly(true); // JavaScript에서 접근 불가
+        cookie.setSecure(true);  // HTTPS에서만 전송
+        cookie.setPath("/");     // 모든 경로에서 유효
+        cookie.setMaxAge(3600);  // 쿠키 유효시간: 1시간 (단위: 초)
+
+        response.addCookie(cookie);
+    }
+
     @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        session.removeAttribute("loginId");
-        session.removeAttribute("memberRole");
-        session.removeAttribute("firebaseUid");
-        session.removeAttribute("loginName");
-        session.removeAttribute("loginEmail");
+    public String logout(HttpServletResponse response) {
+        deleteCookie(response, "loginId");
+        deleteCookie(response, "memberRole");
+        deleteCookie(response, "firebaseUid");
+        deleteCookie(response, "loginName");
+        deleteCookie(response, "loginEmail");
 
         return "redirect:/";
     }
 
     @GetMapping("/myPage")
-    public String myPage(HttpSession session, Model model) {
-        Long memberId = (Long) session.getAttribute("loginId");
+    public String myPage(Model model, HttpServletRequest request) {
+        String loginId = getCookieValue(request, "loginId");
+        Long memberId = (loginId != null) ? Long.valueOf(loginId) : null;
 
         if (memberId != null) {
             model.addAttribute("member", memberService.findById(memberId));
@@ -106,16 +156,19 @@ public class MemberController {
     }
 
     @GetMapping("/{id}")
-    public String findById(@PathVariable Long id, Model model,
+    public String findById(@PathVariable Long id, Model model, @CookieValue(value = "loginId", defaultValue = "") String loginId,
+                           @CookieValue(value = "loginName", defaultValue = "") String loginName,
                            @PageableDefault(page=1) Pageable pageable) {
         MemberDTO memberDTO = memberService.findById(id);
         model.addAttribute("member", memberDTO);
+        model.addAttribute("loginId", loginId);
+        model.addAttribute("loginName", loginName);
         model.addAttribute("page", pageable.getPageNumber());
         return "Member/detail";
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Long id, HttpSession session) {
+    public String delete(@PathVariable Long id, HttpSession session, HttpServletResponse response) {
         String firebaseUid = (String) session.getAttribute("firebaseUid");
 
         try {
@@ -126,14 +179,24 @@ public class MemberController {
             e.printStackTrace();
         }
 
-        session.removeAttribute("loginId");
-        session.removeAttribute("memberRole");
-        session.removeAttribute("firebaseUid");
-        session.removeAttribute("loginName");
-        session.removeAttribute("loginEmail");
+        deleteCookie(response, "loginId");
+        deleteCookie(response, "memberRole");
+        deleteCookie(response, "firebaseUid");
+        deleteCookie(response, "loginName");
+        deleteCookie(response, "loginEmail");
 
         memberService.deleteById(id);
 
         return "redirect:/";
+    }
+
+    // 쿠키 삭제 유틸리티 메서드
+    private void deleteCookie(HttpServletResponse response, String name) {
+        Cookie cookie = new Cookie(name, null);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(0); // 쿠키 즉시 만료
+        response.addCookie(cookie);
     }
 }

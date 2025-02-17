@@ -58,8 +58,8 @@
     </div>
 
     <div id="comment-write" style="margin-top: 3%;">
-        <input type="hidden" id="memberId" th:value="${session.loginId}">
-        <input type="text" id="commentWrite" th:value="${session.loginName}" style="color: black" th:readonly="true" placeholder="작성자">
+        <input type="hidden" id="memberId" th:value="${loginId}">
+        <input type="text" id="commentWrite" th:value="${loginName}" style="color: black" th:readonly="true" placeholder="작성자">
         <input type="text" id="commentContents" placeholder="내용">
         <button id="comment-write-button" onclick="commentWrite()" class="btn-gold">댓글 작성</button>
     </div>
@@ -76,8 +76,8 @@
         location.href = "/Member/list?page=" + page;
     };
 
-    const liker = [[${session.loginId}]];
-    const hater = [[${session.loginId}]];
+    const liker = /*[[${loginId}]]*/ "";
+    const hater = /*[[${loginId}]]*/ "";
     const target = [[${member.id}]];
     const targetHater = [[${member.id}]];
 

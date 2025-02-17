@@ -17,9 +17,7 @@ public class CommentController {
 
     @PostMapping("/save")
     public ResponseEntity save(@ModelAttribute CommentDTO commentDTO) {
-        System.out.println(commentDTO);
         Long saveResult = commentService.save(commentDTO);
-        System.out.println(saveResult);
         if (saveResult != null) {
             List<CommentDTO> commentDTOList = commentService.findAll(commentDTO.getBoardId());
             return new ResponseEntity<>(commentDTOList, HttpStatus.OK);

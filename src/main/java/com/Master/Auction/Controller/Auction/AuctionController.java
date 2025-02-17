@@ -6,10 +6,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 import com.Master.Auction.DTO.Auction.AuctionDTO;
 import org.springframework.data.domain.Pageable;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ui.Model;
+import jakarta.servlet.http.Cookie;
 import java.time.LocalDateTime;
 import java.io.IOException;
 
@@ -24,16 +25,27 @@ public class AuctionController {
         return "Auction/save";
     }
 
+    private String getCookieValue(HttpServletRequest request, String cookieName) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if (cookieName.equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
     @PostMapping("/save")
     public String save(@ModelAttribute AuctionDTO auctionDTO,
                        @RequestParam("endDate") String endDate,
                        @RequestParam("endTimePicker") String endTimePicker,
-                       HttpSession session) throws IOException {
+                       HttpServletRequest request) throws IOException {
         LocalDateTime endDateTime = LocalDateTime.parse(endDate + "T" + endTimePicker);
         auctionDTO.setEndTime(endDateTime);
 
-        Long id = (Long) session.getAttribute("loginId");
-        System.out.println(auctionDTO);
+        String loginId = getCookieValue(request, "loginId");
+        Long id = (loginId != null) ? Long.valueOf(loginId) : null;
         auctionService.save(auctionDTO, endDateTime, id);
         return "home";
     }

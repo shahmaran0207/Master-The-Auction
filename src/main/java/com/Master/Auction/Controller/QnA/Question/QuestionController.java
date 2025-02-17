@@ -9,10 +9,11 @@ import com.Master.Auction.DTO.QnA.Question.QuestionDTO;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.data.domain.Pageable;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ui.Model;
+import jakarta.servlet.http.Cookie;
 import java.io.IOException;
 
 @Controller
@@ -40,10 +41,21 @@ public class QuestionController {
     }
 
     @PostMapping("/save")
-    public String save(@ModelAttribute QuestionDTO questionDTO, HttpSession session) throws IOException {
-        Long id = (Long) session.getAttribute("loginId");
+    public String save(@ModelAttribute QuestionDTO questionDTO, HttpServletRequest request) throws IOException {
+        String loginId = getCookieValue(request, "loginId");
+        Long id = (loginId != null) ? Long.valueOf(loginId) : null;
         questionService.save(questionDTO, id);
         return "home";
     }
 
+    private String getCookieValue(HttpServletRequest request, String cookieName) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if (cookieName.equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
 }
