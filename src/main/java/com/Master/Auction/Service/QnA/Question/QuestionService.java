@@ -13,8 +13,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import java.io.IOException;
+import java.util.Optional;
 import java.io.File;
 
 @Service
@@ -63,4 +65,21 @@ public class QuestionService {
             questionFileRepository.save(questionFileEntity);
         }
     }
+
+    @Transactional
+    public void updateHits(Long id) {
+        questionRepository.updateHits(id);
+    }
+
+    @Transactional
+    public QuestionDTO findById(Long id) {
+        Optional<QuestionEntity> optionalQuestionEntity = questionRepository.findById(id);
+        if (optionalQuestionEntity.isPresent()) {
+            QuestionEntity questionEntity = optionalQuestionEntity.get();
+            return QuestionDTO.toQuestionDTO(questionEntity);
+        } else {
+            return null;
+        }
+    }
+
 }

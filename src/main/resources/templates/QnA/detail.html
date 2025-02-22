@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>MFA - QnA</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="flex flex-col min-h-screen bg-gray-900 text-gray-300">
+<div th:replace="~{header :: header}"></div>
+
+<main class="flex flex-col items-center flex-1 py-12">
+    <div class="w-full max-w-4xl auction-card">
+
+        <div class="p-6 flex flex-col items-center">
+
+            <table class="w-full table-fixed text-lg border-separate border-spacing-2">
+                <h1>QnA 상세정보</h1>
+                <tbody>
+                <tr>
+                    <th>ID</th>
+                    <td th:text="${question.id}"></td>
+                </tr>
+                <tr>
+                    <th>제목</th>
+                    <td th:text="${question.questionTitle}"></td>
+                </tr>
+                <tr>
+                    <th>내용</th>
+                    <td th:text="${question.questionContent}"></td>
+                </tr>
+                <tr>
+                    <th>작성자</th>
+                    <td th:text="${question.memberName}"></td>
+                </tr>
+                <tr>
+                    <th>작성 시간</th>
+                    <td th:text="${question.createDate}"></td>
+                </tr>
+                <tr>
+                    <th>조회 수</th>
+                    <td th:text="${question.questionhits}"></td>
+                </tr>
+                <tr class="profile-image-container mb-6" th:if="${question.fileAttached == 1}">
+                    <img th:src="@{|/Question/${question.storedFileName}|}" alt="Profile Image" class="profile-image">
+                </tr>
+                </tbody>
+            </table>
+
+            <br>
+            <div class="flex items-center space-x-4">
+                <button onclick="listReq()" class="btn-gold">목록</button>
+                <th:block th:if="${question.memberId.toString() == loginId}">
+                    <button id="checkoutBtn" onclick="deleteQ()" class="btn-gold">삭제</button>
+                </th:block>
+            </div>
+
+
+        </div>
+    </div>
+
+    <div th:if="(${question.answerStatus} == 'not answered') and (${memberRole} == 2)"
+         id="comment-write"
+         style="margin-top: 3%; max-width: 900px; width: 100%;">
+
+        <h2 class="text-center text-lg font-bold" style="color: white;">답변 작성</h2>
+
+        <div style="display: flex; gap: 10px; width: 100%;">
+            <input type="text" id="commentWrite" th:value="${loginName}" readonly
+                   style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px; color: black;"
+                   placeholder="작성자">
+
+            <input type="text" id="answer-title" th:value="'Re: ' + ${question.questionTitle}" readonly
+                   style="flex: 1; color: black; padding: 10px; border: 1px solid #ddd; border-radius: 5px;"/>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 10px; width: 100%;">
+            <input type="text" id="commentContents" placeholder="내용"
+                   style="flex: 4; padding: 10px; border: 1px solid #ddd; color: black; border-radius: 5px;"/>
+
+            <button id="comment-write-button" onclick="writeAnswer()" class="btn-gold"
+                    style="flex: 1; padding: 10px; border-radius: 5px; cursor: pointer;">
+                답변 작성
+            </button>
+        </div>
+    </div>
+        <div th:if="${question.answerStatus == 'answered'}" style="margin-right: 16%;">
+            <h2 class="text-center text-lg font-bold mt-5" style="text-align: center; margin-left: 300px; color: white">답변 목록</h2>
+            <table style="width: 150%; margin-right: 220px; border-collapse: collapse; background: white;
+             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); border: none;">
+                <thead>
+                <tr>
+                    <th style="color: white; padding: 10px; border-bottom: 1px solid gold;">
+                        답변 작성자
+                    </th>
+                    <th style="color: white; padding: 10px; border-bottom: 1px solid gold;">
+                        작성일
+                    </th>
+                    <th style="color: white; padding: 10px; border-bottom: 1px solid gold;">
+                        답변 내용
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td style="text-align: center;" th:text="${answer.memberName}"></td>
+                    <td style="text-align: center;" th:text="${#temporals.format(answer.createDate, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                    <td style="text-align: center;" th:text="${answer.content}"></td>
+                </tr>
+                </tbody>
+            </table>
+
+
+        </div>
+
+
+
+
+</main>
+<div th:replace="~{footer :: footer}"></div>
+</body>
+
+<script th:inline="javascript">
+
+    const id = [[${question.answerStatus}]];
+    console.log(id);
+
+
+    const listReq = () => {
+        const page = [[${page}]];
+        location.href = "/QnA/list?page=" + page;
+    };
+
+    const deleteQ = () => {
+        const deleteQnA = [[${question.id}]];
+        location.href = "/QnA/delete/"+ deleteQnA;
+    };
+
+    const writeAnswer = () => {
+        const memberId = /*[[${loginId}]]*/ "";
+        const contents = document.getElementById('commentContents').value;
+        const id = [[${question.id}]];
+
+
+        if (!contents.trim()) {
+            alert('답변 내용을 입력해주세요.');
+            return;
+        }
+
+        $.ajax({
+            url: `/Answer/write/${id}`,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                memberId: memberId,
+                commentContents: contents,
+                Question: id,
+                answerStatus: "answered"
+            }),
+            success: () => {
+                alert('답변이 등록되었습니다.');
+                location.reload();
+            },
+            error: () => {
+                alert('답변 등록에 실패했습니다. 다시 시도해주세요.');
+            }
+        });
+
+    };
+</script>
+</html>

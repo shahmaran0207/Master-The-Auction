@@ -32,5 +32,13 @@ public class AnswerEntity {
     @JoinColumn(name = "member_id", nullable = false)
     private MemberEntity memberEntity;
 
-
+    public static AnswerEntity toSaveEntity(MemberEntity memberEntity, String content, QuestionEntity question) {
+        AnswerEntity answerEntity = new AnswerEntity();
+        answerEntity.setAnswerStatus("answered");
+        answerEntity.setContent(content);
+        answerEntity.setQuestionEntity(question);
+        answerEntity.setCreateDate(LocalDateTime.now());
+        answerEntity.setMemberEntity(memberEntity);
+        return answerEntity;
+    }
 }

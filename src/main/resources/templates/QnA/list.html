@@ -26,6 +26,7 @@
                     <th>문의 사항</th>
                     <th>문의 작성시간</th>
                     <th>문의 조회수</th>
+                    <th>답변 상태</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -37,9 +38,13 @@
                            th:text="${question.memberName}"
                            class="text-yellow-300 hover:underline"></a>
                     </td>
-                    <td class="text-center" th:text="${question.title}"></td>
+                    <td class="text-center" th:text="${question.questionTitle}"></td>
                     <td class="text-center" th:text="${question.createDate}"></td>
                     <td class="text-center" th:text="${question.questionhits}"></td>
+                    <td  class="text-center">
+                        <span th:if="${question.answerStatus == 'answered'}" style="color: green; font-weight: bold;">답변 완료</span>
+                        <span th:if="${question.answerStatus != 'answered'}" style="color: red; font-weight: bold;">미답변</span>
+                    </td>
                 </tr>
                 </tbody>
             </table>

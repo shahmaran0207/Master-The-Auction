@@ -1,6 +1,7 @@
 package com.Master.Auction.DTO.QnA.Answer;
 
 import com.Master.Auction.Entity.QnA.Question.QuestionEntity;
+import com.Master.Auction.Entity.QnA.Answer.AnswerEntity;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
@@ -23,4 +24,14 @@ public class AnswerDTO {
 
     private QuestionEntity questionEntity;
 
+    public static AnswerDTO toAnswerDTO(AnswerEntity answerEntity) {
+        AnswerDTO answerDTO = new AnswerDTO();
+        answerDTO.setId(answerEntity.getId());
+        answerDTO.setContent(answerEntity.getContent());
+        answerDTO.setCreateDate(answerEntity.getCreateDate());
+        answerDTO.setMemberName(answerEntity.getMemberEntity().getMemberName());
+        answerDTO.setAnswerStatus(answerEntity.getAnswerStatus());
+
+        return answerDTO;
+    }
 }

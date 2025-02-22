@@ -1,12 +1,11 @@
 package com.Master.Auction.Controller.QnA.Question;
 
 import com.Master.Auction.Service.QnA.Question.QuestionService;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.GetMapping;
+import com.Master.Auction.Service.QnA.Answer.AnswerService;
 import com.Master.Auction.DTO.QnA.Question.QuestionDTO;
 import org.springframework.data.web.PageableDefault;
+import com.Master.Auction.DTO.QnA.Answer.AnswerDTO;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.data.domain.Pageable;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,6 +20,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class QuestionController {
     private final QuestionService questionService;
+    private final AnswerService answerService;
 
     @GetMapping("/list")
     public String QnAList(@PageableDefault(page = 1) Pageable pageable, Model model) {
@@ -46,6 +46,28 @@ public class QuestionController {
         Long id = (loginId != null) ? Long.valueOf(loginId) : null;
         questionService.save(questionDTO, id);
         return "home";
+    }
+
+    @GetMapping("/{id}")
+    public String QuestionDetail(@CookieValue(value = "loginId", defaultValue = "") String loginId, @CookieValue(value = "loginName") String loginName,
+    @PathVariable Long id, Model model, @CookieValue(value = "memberRole", defaultValue = "") String memberRole,
+                                 @PageableDefault(page=1) Pageable pageable) {
+        questionService.updateHits(id);
+        QuestionDTO questionDTO = questionService.findById(id);
+        AnswerDTO answerDTO = answerService.findByQuestionId(id);
+        model.addAttribute("loginId", loginId);
+        model.addAttribute("loginName", loginName);
+        model.addAttribute("memberRole", memberRole);
+        model.addAttribute("answer", answerDTO);
+        model.addAttribute("question", questionDTO);
+        model.addAttribute("page", pageable.getPageNumber());
+        return "QnA/detail";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable Long id) {
+       // questionService.delete(id);
+        return "redirect:/QnA/list";
     }
 
     private String getCookieValue(HttpServletRequest request, String cookieName) {

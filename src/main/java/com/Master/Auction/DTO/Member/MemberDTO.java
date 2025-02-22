@@ -16,6 +16,7 @@ public class MemberDTO {
     private int role;
     private int likesCount;
     private int hatesCount;
+    private int Money;
 
     private String MemberPassword;
     private String mail;
@@ -27,13 +28,14 @@ public class MemberDTO {
 
     private MultipartFile memberProfile;
 
-    public MemberDTO(Long id, String mail, String memberName, String birthday, int likesCount, int hatesCount){
+    public MemberDTO(Long id, String mail, String memberName, String birthday, int likesCount, int hatesCount, int Money){
         this.id = id;
         this.mail = mail;
         this.memberName = memberName;
         this.birthday = birthday;
         this.likesCount = likesCount;
         this.hatesCount = hatesCount;
+        this.Money = Money;
     }
 
     public static MemberDTO toMemberDTO(MemberEntity memberEntity) {
@@ -42,6 +44,7 @@ public class MemberDTO {
         memberDTO.setRole(memberEntity.getRole());
         memberDTO.setMail(memberEntity.getMail());
         memberDTO.setMemberName(memberEntity.getMemberName());
+        memberDTO.setMoney(memberEntity.getMoney());
 
         if (memberEntity.getFileAttached() == 0) {
             memberDTO.setFileAttached(memberEntity.getFileAttached());
