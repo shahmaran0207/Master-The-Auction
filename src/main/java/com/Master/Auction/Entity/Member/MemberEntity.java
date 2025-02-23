@@ -38,6 +38,9 @@ public class MemberEntity {
     @Column
     private int hatesCount = 0;
 
+    @Column
+    private int Money = 0;
+
     @OneToMany(mappedBy = "memberEntity", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<MemberProfileEntity> memberProfileEntityList = new ArrayList<>();
 
@@ -85,6 +88,7 @@ public class MemberEntity {
         member.setRole(1);
         member.setHatesCount(0);
         member.setLikesCount(0);
+        member.setMoney(0);
         member.setId(memberDTO.getId());
         member.setFileAttached(0);
         return member;
@@ -98,6 +102,7 @@ public class MemberEntity {
         memberEntity.setMemberName(memberDTO.getMemberName());
         memberEntity.setMail(memberDTO.getMail());
         memberEntity.setHatesCount(0);
+        memberEntity.setMoney(0);
         memberEntity.setLikesCount(0);
         memberEntity.setFileAttached(1);
         return memberEntity;

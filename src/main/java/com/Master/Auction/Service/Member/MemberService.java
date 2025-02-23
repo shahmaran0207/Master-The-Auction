@@ -43,9 +43,7 @@ public class MemberService {
         UserRecord.CreateRequest request = new UserRecord.CreateRequest()
                 .setEmail(memberDTO.getMail())
                 .setPassword(memberDTO.getMemberPassword());
-
         UserRecord userRecord = FirebaseAuth.getInstance().createUser(request);
-
         if (memberDTO.getMemberProfile() == null) {
             MemberEntity memberEntity = MemberEntity.toSaveEntity(memberDTO);
             memberRepository.save(memberEntity);
@@ -92,7 +90,7 @@ public class MemberService {
 
         Page<MemberDTO> memberDTOS = memberEntities.map(member ->
                 new MemberDTO(member.getId(), member.getMail(),member.getMemberName(), member.getBirthday(),
-                        member.getLikesCount(), member.getHatesCount()));
+                        member.getLikesCount(), member.getHatesCount(), member.getMoney()));
         return memberDTOS;
     }
 }

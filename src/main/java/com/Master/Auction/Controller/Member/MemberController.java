@@ -55,7 +55,9 @@ public class MemberController {
         String idToken = request.get("idToken");
         try {
             // 1. 쿠키에서 기존 로그인 상태 확인
+
             String existingLoginId = getCookieValue(httpRequest, "loginId");
+
             if (existingLoginId != null) {
                 // 이미 로그인 상태라면 새로 로그인하지 않고 바로 성공 응답
                 return ResponseEntity.ok("/"); // 이미 로그인된 사용자
@@ -63,13 +65,11 @@ public class MemberController {
 
             // 2. Firebase 토큰 검증
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
-
             String email = decodedToken.getEmail();
             String firebaseUid = decodedToken.getUid();
 
             // 3. 사용자 정보 조회
             MemberDTO memberDTO = memberService.login(email);
-
             // 4. HttpOnly 쿠키로 사용자 정보 저장
             setHttpOnlyCookie(httpResponse, "loginId", memberDTO.getId().toString());
             setHttpOnlyCookie(httpResponse, "memberRole", String.valueOf(memberDTO.getRole()));
@@ -77,24 +77,18 @@ public class MemberController {
             setHttpOnlyCookie(httpResponse, "loginName", memberDTO.getMemberName());
             setHttpOnlyCookie(httpResponse, "firebaseUid", firebaseUid);
 
-            System.out.println(memberDTO.getId().toString());
-
             return ResponseEntity.ok("/"); // 로그인 성공
         } catch (Exception e) {
             return ResponseEntity.status(401).body("/Member/login"); // 로그인 실패
         }
     }
 
-    // 쿠키에서 값을 가져오는 유틸리티 메서드
     @GetMapping("/")
     public String home(HttpServletRequest request, Model model) {
-        // 쿠키에서 로그인 상태 확인
         String loginId = getCookieValue(request, "loginId");
-
-        // 로그인 여부를 모델에 전달
         model.addAttribute("isLoggedIn", loginId != null);
 
-        return "home"; // 렌더링할 Thymeleaf 뷰 이름
+        return "home";
     }
 
     private String getCookieValue(HttpServletRequest request, String cookieName) {
