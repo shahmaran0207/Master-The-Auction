@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+    <title>포인트 충전</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="flex flex-col min-h-screen bg-gray-900 text-gray-300">
+<div th:replace="~{header :: header}"></div>
+
+<main class="flex flex-1 items-center justify-center py-12">
+    <div class="w-full max-w-2xl bg-gray-800 p-8 rounded-lg shadow-md text-center">
+        <h2 class="text-2xl font-bold text-yellow-500 mb-6">포인트 충전</h2>
+
+        <div class="mb-4">
+            <label for="chargeAmount" class="block text-lg font-semibold mb-2">충전할 포인트</label>
+            <input type="number" id="chargeAmount" min="100" class="w-full p-3 rounded bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 text-white" placeholder="100 이상 입력" oninput="checkAmount()">
+        </div>
+
+        <button id="chargeButton"  onclick="requestPay()"
+                class="btn-gold" disabled>충전하기</button>
+    </div>
+</main>
+
+<div th:replace="~{footer :: footer}"></div>
+
+<script>
+    function checkAmount() {
+        let amount = document.getElementById("chargeAmount").value;
+        let button = document.getElementById("chargeButton");
+        button.disabled = amount < 100;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('checkoutBtn').addEventListener('click', requestPay);
+    });
+
+    function requestPay() {
+        let amount = document.getElementById("chargeAmount").value;
+        const name  = /*[[${loginEmail}]]*/ "";
+        const email  = /*[[${loginEmail}]]*/ "";
+        if (amount < 100) {
+            alert("충전 금액은 최소 100 이상이어야 합니다.");
+            return;
+        }
+
+        var IMP = window.IMP;
+        IMP.init("imp01786831"); // 가맹점 식별코드
+        IMP.request_pay({
+            pg: "html5_inicis",  // 결제 PG사
+            pay_method: "card",  // 결제 수단
+            merchant_uid: "order_" + new Date().getTime(),
+            name: "포인트 충전",
+            amount: amount,
+            buyer_email: email,
+            buyer_name: name,
+        }, function (rsp) {
+            if (rsp.success) {
+                alert("결제가 완료되었습니다! 결제 금액: " + rsp.paid_amount + "원");
+                // 서버로 결제 정보 전송 (백엔드 API 호출)
+                fetch("/PayMent/charge", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        imp_uid: rsp.imp_uid,
+                        merchant_uid: rsp.merchant_uid,
+                        paid_amount: rsp.paid_amount
+                    })
+                }).then(response => response.json())
+                    .then(data => console.log(data))
+                    .catch(error => console.error("Error:", error));
+            } else {
+                alert("결제 실패: " + rsp.error_msg);
+            }
+        });
+    }
+</script>
+</body>
+</html>
