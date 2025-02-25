@@ -40,10 +40,18 @@
                 <a th:href="@{/Member/delete/{id}(id=${member.id})}" class="btn-gold">회원 탈퇴</a>
                 <a th:href="@{/PayMent/payment}" class="btn-gold">경매 포인트 구매</a>
                 <a th:href="@{/Member/buylist/{id}(id=${member.id})}" class="btn-gold">구매 내역</a>
+                <button onclick="updateReq()" class="btn-gold">비밀번호 변경</button>
             </div>
         </div>
     </div>
 </main>
 <div th:replace="~{footer :: footer}"></div>
+
+<script th:inline="javascript">
+    const updateReq = () => {
+        const id = [[${member.id}]];
+        location.href = "/Member/update/" + id;
+    };
+</script>
 </body>
 </html>

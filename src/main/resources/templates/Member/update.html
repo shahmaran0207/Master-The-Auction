@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>MFA - 비밀번호 변경</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="flex flex-col min-h-screen bg-gray-900 text-gray-300">
+<div th:replace="~{header :: header}"></div>
+
+<main class="flex flex-col items-center flex-1 py-12">
+    <div class="w-full max-w-4xl auction-card">
+        <div class="auction-header text-2xl font-bold tracking-wide text-center">
+            비밀번호 변경
+        </div>
+
+        <form action="/Member/update" method="post" enctype="multipart/form-data" class="flex flex-col space-y-4 p-6">
+            <label for="memberName" class="text-lg font-semibold">이름</label>
+            <input type="text" id="memberName" name="memberName" placeholder="이름 (변경을 원할 때만 입력해 주세요)"
+                   class="p-2 rounded bg-gray-800 border border-gray-600 text-white">
+
+            <label for="ChangeMemberPassword" class="text-lg font-semibold">변경할 비밀번호</label>
+            <input type="password" id="ChangeMemberPassword" name="ChangeMemberPassword" placeholder="변경할 비밀번호 작성"
+                   class="p-2 rounded bg-gray-800 border border-gray-600 text-white" oninput="passwordCheck()">
+            <p id="password-check-result" class="text-sm mt-1"></p>
+
+            <label for="memberPasswordConfirm" class="text-lg font-semibold">변경할 비밀번호 확인</label>
+            <input type="password" id="memberPasswordConfirm" name="memberPasswordConfirm" placeholder="변경할 비밀번호 확인"
+                   class="p-2 rounded bg-gray-800 border border-gray-600 text-white"
+                   oninput="passwordMatchCheck()">
+            <p id="password-match-result" class="text-sm mt-1"></p>
+
+            <label for="memberProfile" class="text-lg font-semibold">파일 첨부</label>
+            <input type="file" id="memberProfile" name="memberProfile"
+                   class="p-2 rounded bg-gray-800 border border-gray-600 text-white">
+
+            <input type="hidden" name="id" th:value="${member.id}">
+            <input type="hidden" name="fileAttached" th:value="${member.fileAttached}">
+            <input type="hidden" name="storedFileName" th:value="${member.storedFileName}">
+            <input type="hidden" name="originalFileName" th:value="${member.originalFileName}">
+            <input type="hidden" name="mail" th:value="${member.mail}">
+            <input type="hidden" name="birthday" th:value="${member.birthday}">
+            <input type="hidden" name="role" th:value="${member.role}">
+            <input type="hidden" name="likesCount" th:value="${member.likesCount}">
+            <input type="hidden" name="hatesCount" th:value="${member.hatesCount}">
+            <input type="hidden" name="Money" th:value="${member.money}">
+            <input type="submit" value="비밀번호 변경" class="btn-gold cursor-pointer" onclick="Update()">
+        </form>
+    </div>
+</main>
+
+<div th:replace="~{footer :: footer}"></div>
+
+<script>
+    const Update = () => {
+        document.updateForm.submit();
+    }
+
+    function passwordCheck() {
+        let password = document.getElementById("ChangeMemberPassword").value;
+        let result = document.getElementById("password-check-result");
+
+        if (password.length >= 7) {
+            result.textContent = "사용 가능한 비밀번호 입니다.";
+            result.style.color = "blue";
+        } else {
+            result.textContent = "비밀번호 길이가 7자 이하입니다.";
+            result.style.color = "red";
+        }
+    }
+
+    function passwordMatchCheck() {
+        let password = document.getElementById("ChangeMemberPassword").value;
+        let confirmPassword = document.getElementById("memberPasswordConfirm").value;
+        let result = document.getElementById("password-match-result");
+
+        if (confirmPassword === "") {
+            result.textContent = "";
+            return;
+        }
+
+        if (password === confirmPassword) {
+            result.textContent = "비밀번호가 확인되었습니다.";
+            result.style.color = "green";
+        } else {
+            result.textContent = "입력하신 비밀번호와 다릅니다.";
+            result.style.color = "red";
+        }
+    }
+
+    // 비밀번호 필드에 포커스되면 체크 시작
+    document.getElementById("ChangeMemberPassword").addEventListener("focus", passwordCheck);
+    document.getElementById("memberPasswordConfirm").addEventListener("focus", passwordMatchCheck);
+
+    // 입력 필드를 떠날 때도 체크
+    document.getElementById("ChangeMemberPassword").addEventListener("blur", passwordCheck);
+    document.getElementById("memberPasswordConfirm").addEventListener("blur", passwordMatchCheck);
+
+</script>
+</body>
+</html>

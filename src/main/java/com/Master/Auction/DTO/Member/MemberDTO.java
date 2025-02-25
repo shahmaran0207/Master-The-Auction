@@ -19,9 +19,11 @@ public class MemberDTO {
     private int Money;
 
     private String MemberPassword;
+    private String ChangeMemberPassword;
     private String mail;
     private String memberName;
     private String originalFileName;
+    private String changeFileName;
     private String storedFileName;
 
     private String birthday;

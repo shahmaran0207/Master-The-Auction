@@ -162,9 +162,8 @@ public class MemberController {
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Long id, HttpSession session, HttpServletResponse response) {
-        String firebaseUid = (String) session.getAttribute("firebaseUid");
-
+    public String delete(@CookieValue(value = "firebaseUid", defaultValue = "") String firebaseUid,
+                         @PathVariable Long id, HttpSession session, HttpServletResponse response) {
         try {
             if (firebaseUid != null) {
                 FirebaseAuth.getInstance().deleteUser(firebaseUid);
@@ -193,4 +192,31 @@ public class MemberController {
         cookie.setMaxAge(0); // 쿠키 즉시 만료
         response.addCookie(cookie);
     }
+
+    @GetMapping("/update/{id}")
+    public String updateForm(@CookieValue(value = "loginId", defaultValue = "") String loginId, @PathVariable Long id, Model model) {
+        model.addAttribute("loginId", loginId);
+        MemberDTO memberDTO = memberService.findById(id);
+        model.addAttribute("member", memberDTO);
+        return "Member/update";
+    }
+
+    @PostMapping("/update")
+    public String update(@CookieValue(value = "firebaseUid", defaultValue = "") String firebaseUid,
+                         @ModelAttribute MemberDTO memberDTO, HttpServletRequest request,
+                         Model model) throws IOException, FirebaseAuthException {
+            System.out.println(memberDTO.getMemberName());
+//        try {
+//            if (firebaseUid != null) {
+//                FirebaseAuth.getInstance().deleteUser(firebaseUid);
+//            }
+//        } catch (FirebaseAuthException e) {
+//            e.printStackTrace();
+//        }
+        memberService.update(memberDTO);
+
+        model.addAttribute("member", memberDTO);
+        return "Member/myPage";
+    }
+
 }
