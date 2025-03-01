@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <title>MFA - 비밀번호 변경</title>
+    <title>MTA - 비밀번호 변경</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body class="flex flex-col min-h-screen bg-gray-900 text-gray-300">
@@ -22,8 +22,8 @@
             <input type="text" id="memberName" name="memberName" placeholder="이름 (변경을 원할 때만 입력해 주세요)"
                    class="p-2 rounded bg-gray-800 border border-gray-600 text-white">
 
-            <label for="ChangeMemberPassword" class="text-lg font-semibold">변경할 비밀번호</label>
-            <input type="password" id="ChangeMemberPassword" name="ChangeMemberPassword" placeholder="변경할 비밀번호 작성"
+            <label for="MemberPassword" class="text-lg font-semibold">변경할 비밀번호</label>
+            <input type="password" id="MemberPassword" name="MemberPassword" placeholder="변경할 비밀번호 작성"
                    class="p-2 rounded bg-gray-800 border border-gray-600 text-white" oninput="passwordCheck()">
             <p id="password-check-result" class="text-sm mt-1"></p>
 
@@ -60,7 +60,7 @@
     }
 
     function passwordCheck() {
-        let password = document.getElementById("ChangeMemberPassword").value;
+        let password = document.getElementById("MemberPassword").value;
         let result = document.getElementById("password-check-result");
 
         if (password.length >= 7) {
@@ -73,7 +73,7 @@
     }
 
     function passwordMatchCheck() {
-        let password = document.getElementById("ChangeMemberPassword").value;
+        let password = document.getElementById("MemberPassword").value;
         let confirmPassword = document.getElementById("memberPasswordConfirm").value;
         let result = document.getElementById("password-match-result");
 
@@ -92,11 +92,11 @@
     }
 
     // 비밀번호 필드에 포커스되면 체크 시작
-    document.getElementById("ChangeMemberPassword").addEventListener("focus", passwordCheck);
+    document.getElementById("MemberPassword").addEventListener("focus", passwordCheck);
     document.getElementById("memberPasswordConfirm").addEventListener("focus", passwordMatchCheck);
 
     // 입력 필드를 떠날 때도 체크
-    document.getElementById("ChangeMemberPassword").addEventListener("blur", passwordCheck);
+    document.getElementById("MemberPassword").addEventListener("blur", passwordCheck);
     document.getElementById("memberPasswordConfirm").addEventListener("blur", passwordMatchCheck);
 
 </script>

@@ -59,7 +59,7 @@ public class EmailService {
 
         MimeMessage message = javaMailSender.createMimeMessage();
         message.addRecipients(MimeMessage.RecipientType.TO, email);
-        message.setSubject("[MFA - Master The Auction] 회원가입 인증 코드 안내");
+        message.setSubject("[MTA - Master The Auction] 회원가입 인증 코드 안내");
         message.setFrom(senderEmail);
         message.setText(setContext(authCode), "utf-8", "html");
 

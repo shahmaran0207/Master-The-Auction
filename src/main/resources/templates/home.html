@@ -3,29 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MFA - Home</title>
+    <title>MTA - Home</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body class="bg-gray-900 text-white flex flex-col min-h-screen">
 
-<!-- Header -->
 <div th:replace="~{header :: header}"></div>
 
-<!-- Main Content -->
 <main class="flex-1 flex flex-col items-center justify-center text-center p-6">
 
-    <h1 class="text-4xl font-bold text-yellow-400 drop-shadow-lg">🔥 Welcome to MFA Auctions! 🔥</h1>
+    <h1 class="text-4xl font-bold text-yellow-400 drop-shadow-lg">🔥 Welcome to MTA Auctions! 🔥</h1>
     <p class="mt-4 text-lg text-gray-300">Find exclusive items, bid, and sell with ease.</p>
 
-    <!-- Navigation Buttons -->
     <div class="mt-8 flex flex-wrap justify-center gap-6">
         <a href="/Auction/save" class="btn-gold text-xl">🛍️ Sell Your Items</a>
         <a href="/Member/myPage" class="btn-gold text-xl">👤 My Account</a>
         <a href="/auctions" class="btn-gold text-xl">🔥 Explore Auctions</a>
     </div>
 
-    <!-- Featured Auctions -->
     <div class="mt-12 w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div class="auction-card">
             <div class="p-4">

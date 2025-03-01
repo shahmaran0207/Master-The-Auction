@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
-    <title>MFA - My Page</title>
+    <title>MTA - My Page</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body class="flex flex-col min-h-screen bg-gray-900 text-gray-300">
@@ -33,6 +33,10 @@
                     <th>이름</th>
                     <td th:text="${member.memberName}"></td>
                 </tr>
+                <tr>
+                    <th>보유 포인트</th>
+                    <td id="moneyAmount" th:data-money="${member.money}"></td>
+                </tr>
                 </tbody>
             </table>
 
@@ -52,6 +56,13 @@
         const id = [[${member.id}]];
         location.href = "/Member/update/" + id;
     };
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const moneyElement = document.getElementById("moneyAmount");
+        const moneyValue = parseInt(moneyElement.dataset.money, 10) || 0;
+
+        moneyElement.textContent = moneyValue.toLocaleString() + '원';
+    });
 </script>
 </body>
 </html>

@@ -1,8 +1,5 @@
 package com.Master.Auction.Service.Member;
 
-import com.Master.Auction.DTO.Board.BoardDTO;
-import com.Master.Auction.Entity.Board.BoardEntity;
-import com.Master.Auction.Entity.Board.BoardFileEntity;
 import com.Master.Auction.Repository.Member.MemberProfileRepository;
 import com.Master.Auction.Repository.Member.MemberRepository;
 import com.Master.Auction.Entity.Member.MemberProfileEntity;
@@ -20,6 +17,7 @@ import com.google.firebase.auth.UserRecord;
 import lombok.RequiredArgsConstructor;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.List;
 import java.io.File;
 
 @Service
@@ -98,58 +96,47 @@ public class MemberService {
     }
 
     public MemberDTO update(MemberDTO memberDTO) throws IOException, FirebaseAuthException {
+        UserRecord.CreateRequest request = new UserRecord.CreateRequest()
+                .setEmail(memberDTO.getMail())
+                .setPassword(memberDTO.getMemberPassword());
+        UserRecord userRecord = FirebaseAuth.getInstance().createUser(request);
 
-//        UserRecord.CreateRequest request = new UserRecord.CreateRequest()
-//                .setEmail(memberDTO.getMail())
-//                .setPassword(memberDTO.getMemberPassword());
-//        UserRecord userRecord = FirebaseAuth.getInstance().createUser(request);
-//
         MemberEntity exisitingMemberEntity = memberRepository.findById(memberDTO.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + memberDTO.getId()));
 
-        if (!memberDTO.getMemberName().isEmpty()) {
-            exisitingMemberEntity.setMemberName(memberDTO.getMemberName());
-            System.out.println("이름 있음"+memberDTO.getMemberName());
-        }
         if (!memberDTO.getMemberProfile().isEmpty()) {
-            System.out.println("사진 없음"+memberDTO.getMemberProfile().getOriginalFilename());
+            List<MemberProfileEntity> existingProfiles = memberProfileRepository.findByMemberEntity(exisitingMemberEntity);
+
+            for (MemberProfileEntity profile : existingProfiles) {
+                String oldFilePath = "C:/Users/wjaud/OneDrive/바탕 화면/MOST IMPORTANT/Master-The-Auction/profile/" + profile.getStoredFileName();
+                File oldFile = new File(oldFilePath);
+                if (oldFile.exists()) {
+                    oldFile.delete();
+                }
+                memberProfileRepository.delete(profile);
+            }
+
             MultipartFile memberProfile = memberDTO.getMemberProfile();
             String originalFilename = memberProfile.getOriginalFilename();
             String storedFileName = System.currentTimeMillis() + "_" + originalFilename;
             String savePath = "C:/Users/wjaud/OneDrive/바탕 화면/MOST IMPORTANT/Master-The-Auction/profile/" + storedFileName;
             memberProfile.transferTo(new File(savePath));
+
+            MemberProfileEntity memberProfileEntity = MemberProfileEntity.toMemberProfileEntity(exisitingMemberEntity, originalFilename, storedFileName);
+            memberProfileRepository.save(memberProfileEntity);
         }
 
-        System.out.println("이름+사진 없음"+memberDTO.getMemberName());
-        System.out.println(exisitingMemberEntity.getBirthday());
-//        exisitingMemberEntity.setId(exisitingMemberEntity.getId());
-//        exisitingMemberEntity.setBirthday(memberDTO.getBirthday());
+        if (!memberDTO.getMemberName().isEmpty()) {
+            exisitingMemberEntity.setMemberName(memberDTO.getMemberName());
+        }
 
-        //여긴 나머지 이름, 사지 ㄴ제외 정보들 DB에서 보고 입력
-//            exisitingMemberEntity.setBoardPass(boardDTO.getBoardPass());
-//            exisitingMemberEntity.setBoardTitle(boardDTO.getBoardTitle());
-//            exisitingMemberEntity.setBoardContents(boardDTO.getBoardContents());
-//            exisitingMemberEntity.setBoardHits(boardDTO.getBoardHits());
-//            exisitingMemberEntity.setLikesCount(boardDTO.getLikesCount());
-//            exisitingMemberEntity.setHatesCount(boardDTO.getHatesCount());
-//            exisitingMemberEntity.setMemberEntity(memberEntity);
+        exisitingMemberEntity.setBirthday(memberDTO.getBirthday());
+        exisitingMemberEntity.setHatesCount(memberDTO.getHatesCount());
+        exisitingMemberEntity.setLikesCount(memberDTO.getLikesCount());
+        exisitingMemberEntity.setMail(memberDTO.getMail());
+        exisitingMemberEntity.setRole(memberDTO.getRole());
+        exisitingMemberEntity.setMoney(memberDTO.getMoney());
 
-//
-//            // 파일 정보 업데이트
-//            existingBoardEntity.setBoardPass(boardDTO.getBoardPass());
-//            existingBoardEntity.setFileAttached(1);
-//            existingBoardEntity.setBoardTitle(boardDTO.getBoardTitle());
-//            existingBoardEntity.setBoardContents(boardDTO.getBoardContents());
-//            existingBoardEntity.setBoardHits(boardDTO.getBoardHits());
-//            existingBoardEntity.setLikesCount(boardDTO.getLikesCount());
-//            existingBoardEntity.setHatesCount(boardDTO.getHatesCount());
-//            existingBoardEntity.setMemberEntity(memberEntity);
-//
-//            // 파일 엔티티 생성 및 저장
-//            BoardFileEntity boardFileEntity = BoardFileEntity.toBoardFileEntity(existingBoardEntity, originalFilename, storedFileName);
-//            boardFileRepository.save(boardFileEntity);
-//        }
-//
         memberRepository.save(exisitingMemberEntity);
         return findById(memberDTO.getId());
     }

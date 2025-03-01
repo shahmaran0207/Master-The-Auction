@@ -131,6 +131,7 @@ public class MemberController {
 
         if (memberId != null) {
             model.addAttribute("member", memberService.findById(memberId));
+            MemberDTO memberDTO = memberService.findById(memberId);
             return "Member/myPage";
 
         } else return "Member/login";
@@ -205,14 +206,13 @@ public class MemberController {
     public String update(@CookieValue(value = "firebaseUid", defaultValue = "") String firebaseUid,
                          @ModelAttribute MemberDTO memberDTO, HttpServletRequest request,
                          Model model) throws IOException, FirebaseAuthException {
-            System.out.println(memberDTO.getMemberName());
-//        try {
-//            if (firebaseUid != null) {
-//                FirebaseAuth.getInstance().deleteUser(firebaseUid);
-//            }
-//        } catch (FirebaseAuthException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            if (firebaseUid != null) {
+                FirebaseAuth.getInstance().deleteUser(firebaseUid);
+            }
+        } catch (FirebaseAuthException e) {
+            e.printStackTrace();
+        }
         memberService.update(memberDTO);
 
         model.addAttribute("member", memberDTO);
