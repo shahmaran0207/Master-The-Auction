@@ -1,19 +1,19 @@
 package com.Master.Auction.Controller.PayMent;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.GetMapping;
+import com.Master.Auction.Service.Member.MemberService;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
+import com.Master.Auction.DTO.Member.MemberDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ui.Model;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("PayMent")
+@RequestMapping("/PayMent")
 public class PayMentController {
+    private final MemberService memberService;
 
-    @GetMapping("payment")
+    @GetMapping("/payment")
     public String payment(@CookieValue(value = "loginName", defaultValue = "") String loginName,
                           @CookieValue(value = "loginEmail", defaultValue = "") String loginEmail, Model model) {
         model.addAttribute("loginEmail", loginEmail);
@@ -22,7 +22,14 @@ public class PayMentController {
     }
 
     @PostMapping("/charge")
-    public String charge(){
-        return "PayMent/payment";
+    public String chargePoint(@RequestBody MemberDTO memberDTO,
+                              @CookieValue(value = "loginEmail", defaultValue = "") String loginEmail,
+                              @CookieValue(value = "loginId", defaultValue = "") String loginId) {
+
+        Long memberId = Long.parseLong(loginId);
+
+        memberService.buyPoint(memberId, memberDTO);
+
+        return "redirect:/Member/myPage";
     }
 }

@@ -1,8 +1,8 @@
 package com.Master.Auction.Controller.Board;
 
 import com.Master.Auction.Service.Board.BoardHateService;
-import org.springframework.web.bind.annotation.*;
 import com.Master.Auction.DTO.Board.BoardHateDTO;
+import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
 
 @RestController

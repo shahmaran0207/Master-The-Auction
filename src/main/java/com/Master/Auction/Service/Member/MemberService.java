@@ -130,14 +130,23 @@ public class MemberService {
             exisitingMemberEntity.setMemberName(memberDTO.getMemberName());
         }
 
-        exisitingMemberEntity.setBirthday(memberDTO.getBirthday());
-        exisitingMemberEntity.setHatesCount(memberDTO.getHatesCount());
-        exisitingMemberEntity.setLikesCount(memberDTO.getLikesCount());
-        exisitingMemberEntity.setMail(memberDTO.getMail());
-        exisitingMemberEntity.setRole(memberDTO.getRole());
-        exisitingMemberEntity.setMoney(memberDTO.getMoney());
+        exisitingMemberEntity.setBirthday(exisitingMemberEntity.getBirthday());
+        exisitingMemberEntity.setHatesCount(exisitingMemberEntity.getHatesCount());
+        exisitingMemberEntity.setLikesCount(exisitingMemberEntity.getLikesCount());
+        exisitingMemberEntity.setMail(exisitingMemberEntity.getMail());
+        exisitingMemberEntity.setRole(exisitingMemberEntity.getRole());
+        exisitingMemberEntity.setMoney(exisitingMemberEntity.getMoney());
 
         memberRepository.save(exisitingMemberEntity);
         return findById(memberDTO.getId());
+    }
+
+    public void buyPoint(Long memberId, MemberDTO memberDTO) {
+
+        MemberEntity exisitingMemberEntity = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + memberDTO.getId()));
+
+        exisitingMemberEntity.setMoney(exisitingMemberEntity.getMoney()+ memberDTO.getMoney());
+        memberRepository.save(exisitingMemberEntity);
     }
 }

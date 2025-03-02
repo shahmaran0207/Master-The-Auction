@@ -1,6 +1,7 @@
 package com.Master.Auction.DTO.Member;
 
 import org.springframework.web.multipart.MultipartFile;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.Master.Auction.Entity.Member.MemberEntity;
 import lombok.*;
 
@@ -16,6 +17,8 @@ public class MemberDTO {
     private int role;
     private int likesCount;
     private int hatesCount;
+
+    @JsonProperty("Money")
     private int Money;
 
     private String MemberPassword;

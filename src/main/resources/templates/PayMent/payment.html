@@ -40,45 +40,48 @@
 
     function requestPay() {
         let amount = document.getElementById("chargeAmount").value;
-        const name  = /*[[${loginEmail}]]*/ "";
-        const email  = /*[[${loginEmail}]]*/ "";
+        const name  = "[[${loginName}]]";
+        const email = "[[${loginEmail}]]";
+
         if (amount < 100) {
             alert("충전 금액은 최소 100 이상이어야 합니다.");
             return;
         }
 
         var IMP = window.IMP;
-        IMP.init("imp01786831"); // 가맹점 식별코드
+        IMP.init("imp01786831");
         IMP.request_pay({
-            pg: "html5_inicis",  // 결제 PG사
-            pay_method: "card",  // 결제 수단
+            pg: "html5_inicis",
+            pay_method: "card",
             merchant_uid: "order_" + new Date().getTime(),
             name: "포인트 충전",
             amount: amount,
             buyer_email: email,
             buyer_name: name,
-        }, function (rsp) {
+        },function (rsp) {
             if (rsp.success) {
-                alert("결제가 완료되었습니다! 결제 금액: " + rsp.paid_amount + "원");
-                // 서버로 결제 정보 전송 (백엔드 API 호출)
-                fetch("/PayMent/charge", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        imp_uid: rsp.imp_uid,
-                        merchant_uid: rsp.merchant_uid,
-                        paid_amount: rsp.paid_amount
-                    })
-                }).then(response => response.json())
-                    .then(data => console.log(data))
-                    .catch(error => console.error("Error:", error));
+                localStorage.setItem('totalOrderPrice', amount);
+
+                var paymentData = {
+                    Money: amount
+                };
+
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "/PayMent/charge", true);
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        alert("결제가 완료 되었습니다.");
+                        window.location.href = "/Member/myPage";
+                    }
+                };
+                xhr.send(JSON.stringify(paymentData));
             } else {
-                alert("결제 실패: " + rsp.error_msg);
+                alert("결제에 실패하였습니다. 에러 내용: " + rsp.error_msg);
             }
         });
     }
+
 </script>
 </body>
 </html>
