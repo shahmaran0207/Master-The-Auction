@@ -16,7 +16,6 @@
 
         <div class="p-6 flex flex-col items-center">
 
-
             <table class="w-full table-fixed text-lg border-separate border-spacing-2">
                 <tbody>
                 <tr>
@@ -44,7 +43,7 @@
                     <td th:text="${board.boardHits}"></td>
                 </tr>
                 <tr class="profile-image-container mb-6" th:if="${board.fileAttached == 1}">
-                    <img th:src="@{|/Board/${board.storedFileName}|}" alt="Profile Image" class="profile-image">
+                    <img th:src="@{|/BD/${board.storedFileName}|}" alt="Profile Image" class="profile-image">
                 </tr>
                 </tbody>
             </table>

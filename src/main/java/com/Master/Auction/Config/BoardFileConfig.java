@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class BoardFileConfig implements WebMvcConfigurer {
 
-    private String resourcePath = "/Board/**";
+    private String resourcePath = "/BD/**";
     private String savePath = "file:///C:/Users/wjaud/OneDrive/바탕 화면/MOST IMPORTANT/Master-The-Auction/Board/";
 
     @Override
