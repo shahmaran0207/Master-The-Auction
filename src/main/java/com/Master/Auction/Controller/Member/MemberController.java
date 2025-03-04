@@ -131,7 +131,6 @@ public class MemberController {
 
         if (memberId != null) {
             model.addAttribute("member", memberService.findById(memberId));
-            MemberDTO memberDTO = memberService.findById(memberId);
             return "Member/myPage";
 
         } else return "Member/login";

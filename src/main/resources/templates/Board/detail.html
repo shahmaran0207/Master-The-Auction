@@ -43,7 +43,7 @@
                     <td th:text="${board.boardHits}"></td>
                 </tr>
                 <tr class="profile-image-container mb-6" th:if="${board.fileAttached == 1}">
-                    <img th:src="@{|/BD/${board.storedFileName}|}" alt="Profile Image" class="profile-image">
+                    <img th:src="@{|${board.storedFileName}|}" alt="Profile Image" class="profile-image">
                 </tr>
                 </tbody>
             </table>

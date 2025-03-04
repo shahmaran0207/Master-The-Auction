@@ -11,18 +11,15 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        // 쿠키에서 firebaseUid 값 확인
         String firebaseUid = getCookieValue(request, "firebaseUid");
 
         if (firebaseUid == null || firebaseUid.isEmpty()) {
-            // firebaseUid가 없으면 로그인 페이지로 리다이렉트
             response.sendRedirect("/Member/login");
             return false;
         }
-        return true; // 인증 성공
+        return true;
     }
 
-    // 요청에서 특정 쿠키 값 가져오기
     private String getCookieValue(HttpServletRequest request, String cookieName) {
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
@@ -31,6 +28,6 @@ public class LoginInterceptor implements HandlerInterceptor {
                 }
             }
         }
-        return null; // 쿠키가 없을 경우 null 반환
+        return null;
     }
 }

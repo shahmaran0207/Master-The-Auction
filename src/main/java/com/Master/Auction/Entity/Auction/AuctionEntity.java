@@ -50,6 +50,10 @@ public class AuctionEntity {
     private String auctionStatus;
 
     @OneToMany(mappedBy = "auctionEntity", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<BidEntity> bids = new ArrayList<>();
+
+
+    @OneToMany(mappedBy = "auctionEntity", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<AuctionFileEntity> auctionFileEntities = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -69,6 +73,23 @@ public class AuctionEntity {
         auctionEntity.setMaxPrice(auctionDTO.getStartPrice()+1);
         auctionEntity.setAuctionStatus("not finished");
         auctionEntity.setMemberEntity(memberEntity);
+        return auctionEntity;
+    }
+
+    public static AuctionEntity toSaveFileEntity(AuctionDTO auctionDTO, MemberEntity memberEntity, LocalDateTime endTime) {
+        AuctionEntity auctionEntity = new AuctionEntity();
+        auctionEntity.setAuctionTitle(auctionDTO.getAuctionTitle());
+        auctionEntity.setAuctionContents(auctionDTO.getAuctionContent());
+        auctionEntity.setAuctionHits(0);
+        auctionEntity.setFileAttached(1);
+        auctionEntity.setStartTime(LocalDateTime.now());
+        auctionEntity.setEndTime(endTime);
+        auctionEntity.setMinPrice(auctionDTO.getStartPrice());
+        auctionEntity.setStartPrice(auctionDTO.getStartPrice());
+        auctionEntity.setMaxPrice(auctionDTO.getStartPrice()+1);
+        auctionEntity.setAuctionStatus("not finished");
+        auctionEntity.setMemberEntity(memberEntity);
+
         return auctionEntity;
     }
 }

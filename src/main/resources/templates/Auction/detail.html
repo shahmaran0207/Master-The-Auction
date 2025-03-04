@@ -19,7 +19,7 @@
 
         <div class="p-6 flex flex-col items-center">
             <div class="profile-image-container mb-6" th:if="${auction.fileAttached == 1}">
-                <img th:src="@{|/Auction/${auction.storedFileName}|}" alt="Profile Image" class="profile-image">
+                <img th:src="@{|${auction.storedFileName}|}" alt="Profile Image" class="profile-image">
             </div>
 
             <table class="w-full table-fixed text-lg border-separate border-spacing-2">
@@ -46,25 +46,112 @@
                 </tr>
                 <tr>
                     <th>현재 최고 입찰가</th>
-                    <td th:text="${auction.maxPrice}"></td>
+                    <td th:text="${bidPrice == 0 ? auction.maxPrice : bidPrice}"></td>
                 </tr>
                 </tbody>
             </table>
 
             <br>
-            <button onclick="listReq()" class="btn-gold">목록</button>
+            <th:block th:if="${auction.endTime != null and auction.endTime > #temporals.createNow()}">
+                <div class="flex space-x-4 items-center">
+                    <button type="button" onclick="listReq()" class="btn-gold">목록</button>
+
+                    <form id="bidForm" action="/Bid/bid" method="post"
+                          class="flex space-x-2 items-center bg-transparent border-none outline-none p-0 m-0">
+                        <input type="hidden" name="page" th:value="${page}">
+                        <input type="hidden" name="auctionId" th:value="${auction.id}">
+
+                        <input type="number" name="bidPrice" id="bidPrice"
+                               placeholder="입찰가 입력"
+                               class="bg-transparent border border-gray-600 text-gray-300 p-2
+                   rounded focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-gold-500">
+
+                        <button type="button" onclick="submitBid()" class="btn-gold" id="bidBtn" disabled>입찰하기</button>
+                    </form>
+                </div>
+
+                <p id="bidMessage" class="mt-2 text-sm font-bold"></p>
+                <p id="moneyMessage" class="mt-2 text-sm font-bold"></p>
+            </th:block>
+            <th:block th:if="${auction.endTime != null and auction.endTime < #temporals.createNow()}">
+                <p class="text-red-500 font-bold mt-4">이미 마감된 경매입니다.</p>
+            </th:block>
+
+
 
         </div>
     </div>
-
 </main>
+
 <div th:replace="~{footer :: footer}"></div>
-</body>
 
 <script th:inline="javascript">
     const listReq = () => {
         const page = [[${page}]];
         location.href = "/Auction/list?page=" + page;
     };
+
+    document.getElementById('bidPrice').addEventListener('input', function () {
+        const bidBtn = document.getElementById('bidBtn');
+        bidBtn.disabled = !this.value || this.value <= 0;
+    });
+
+    const member = [[${memberDTO.money}]];
+    console.log(member);
+    const maxPrice = [[${auction.maxPrice}]];
+
+    // 입찰가 입력 시 유효성 검사 및 메시지 표시
+    document.getElementById('bidPrice').addEventListener('input', function () {
+        const bidBtn = document.getElementById('bidBtn');
+        const bidMessage = document.getElementById('bidMessage');
+        const moneyMessage = document.getElementById('moneyMessage');
+        const bidValue = parseInt(this.value, 10);
+
+        // 기본적으로 오류 메시지를 리셋
+        bidMessage.innerText = '';
+        bidMessage.className = '';
+        moneyMessage.innerText = '';
+        moneyMessage.className = '';
+
+        // 유효성 검사
+        if (isNaN(bidValue) || bidValue <= 0) {
+            bidMessage.innerText = '올바른 금액을 입력하세요.';
+            bidMessage.className = 'mt-2 text-sm font-bold text-red-500';
+            bidBtn.disabled = true;
+            return;
+        }
+
+        // 최저 입찰가보다 낮을 경우
+        if (bidValue <= maxPrice) {
+            bidMessage.innerText = '현재 최고 입찰가보다 낮습니다.';
+            bidMessage.className = 'mt-2 text-sm font-bold text-red-500';
+            bidBtn.disabled = true;
+        } else {
+            bidMessage.innerText = '입찰 가능한 금액입니다.';
+            bidMessage.className = 'mt-2 text-sm font-bold text-blue-400';
+        }
+
+        // 내가 가진 포인트보다 클 경우
+        if (member < bidValue) {
+            moneyMessage.innerText = '본인이 가진 포인트를 초과합니다.';
+            moneyMessage.className = 'mt-2 text-sm font-bold text-red-500';
+            bidBtn.disabled = true;
+        } else {
+            moneyMessage.innerText = '입찰 가능한 금액입니다.';
+            moneyMessage.className = 'mt-2 text-sm font-bold text-blue-400';
+        }
+
+        // 두 조건이 모두 충족될 때만 버튼을 활성화
+        if (bidValue > maxPrice && member >= bidValue) {
+            bidBtn.disabled = false;
+        } else {
+            bidBtn.disabled = true;
+        }
+    });
+
+    const submitBid = () => {
+        document.getElementById('bidForm').submit();
+    };
 </script>
+</body>
 </html>
