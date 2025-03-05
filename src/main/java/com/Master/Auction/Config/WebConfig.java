@@ -13,6 +13,7 @@ public class WebConfig implements WebMvcConfigurer {
         this.loginInterceptor = loginInterceptor;
     }
 
+    //이거 작동 됨 -> 이전 프로젝트에서는 안되었는데 단순한 오류였던 듯
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(loginInterceptor)
