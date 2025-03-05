@@ -1,5 +1,6 @@
 package com.Master.Auction.Entity.Member;
 
+import com.Master.Auction.Entity.Auction.BidEntity;
 import com.Master.Auction.DTO.Member.MemberDTO;
 import jakarta.persistence.*;
 import java.util.ArrayList;
@@ -44,21 +45,21 @@ public class MemberEntity {
     @OneToMany(mappedBy = "memberEntity", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<MemberProfileEntity> memberProfileEntityList = new ArrayList<>();
 
-    // 내가 좋아요를 누른 회원들
     @OneToMany(mappedBy = "liker", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberLikeEntity> likedMembers = new ArrayList<>();
 
-    // 나를 좋아요한 회원들
     @OneToMany(mappedBy = "target", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberLikeEntity> likedByMembers = new ArrayList<>();
 
-    // 내가 좋아요를 누른 회원들
     @OneToMany(mappedBy = "hater", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberHateEntity> hatedMembers = new ArrayList<>();
 
     @OneToMany(mappedBy = "targetHater", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberHateEntity> hatedByMembers = new ArrayList<>();
 
+
+    @OneToMany(mappedBy = "memberEntity", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<BidEntity> bids = new ArrayList<>();
 
     public void increaseLikesCount() {
         this.likesCount++;
