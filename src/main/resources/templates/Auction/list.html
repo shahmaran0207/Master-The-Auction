@@ -17,6 +17,16 @@
         <button class="btn-gold" style="margin-top: 3%; margin-left: 45%; width: 10%; align-items: center" onclick="saveReq()">글 작성</button>
 
         <div class="p-6 flex-grow">
+            <form action="/Auction/list" method="get" class="filter-form flex items-center gap-4 justify-end">
+                <label for="statusFilter" class="filter-label">경매 상태:</label>
+                <select name="status" id="statusFilter" onchange="this.form.submit()" class="filter-select">
+                    <option value="" th:selected="${#strings.isEmpty(status)}">전체</option>
+                    <option value="not finished" th:selected="${status == 'not finished'}">경매 진행 중</option>
+                    <option value="finished" th:selected="${status == 'finished'}">경매 종료</option>
+                </select>
+                <input type="hidden" name="page" value="1"/>
+            </form>
+
 
             <table>
                 <thead>
@@ -55,18 +65,19 @@
         </div>
 
         <div class="pagination flex justify-center gap-2 mt-6 p-4">
-            <a th:href="@{/Auction/paging(page=1)}" class="btn-gold">First</a>
-            <a th:href="${AuctionList.first} ? '#' : @{/Auction/paging(page=${AuctionList.number})}" class="btn-gold">Prev</a>
+            <a th:href="@{/Auction/list(page=1, status=${status})}" class="btn-gold">First</a>
+            <a th:href="${AuctionList.first} ? '#' : @{/Auction/list(page=${AuctionList.number}, status=${status})}" class="btn-gold">Prev</a>
 
             <span th:each="page: ${#numbers.sequence(startPage, endPage)}" class="btn-gold">
-                <span th:if="${page == AuctionList.number + 1}" th:text="${page}" ></span>
-                <a th:unless="${page == AuctionList.number + 1}"
-                   th:href="@{/Auction/paging(page=${page})}" th:text="${page}"></a>
-            </span>
+        <span th:if="${page == AuctionList.number + 1}" th:text="${page}"></span>
+        <a th:unless="${page == AuctionList.number + 1}"
+           th:href="@{/Auction/list(page=${page}, status=${status})}" th:text="${page}"></a>
+    </span>
 
-            <a th:href="${AuctionList.last} ? '#' : @{/Auction/paging(page=${AuctionList.number + 2})}" class="btn-gold">Next</a>
-            <a th:href="@{/Auction/paging(page=${AuctionList.totalPages})}" class="btn-gold">Last</a>
+            <a th:href="${AuctionList.last} ? '#' : @{/Auction/list(page=${AuctionList.number + 2}, status=${status})}" class="btn-gold">Next</a>
+            <a th:href="@{/Auction/list(page=${AuctionList.totalPages}, status=${status})}" class="btn-gold">Last</a>
         </div>
+
     </div>
 </main>
 <div th:replace="~{footer :: footer}"></div>
