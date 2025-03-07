@@ -10,6 +10,7 @@ import com.Master.Auction.Entity.Member.MemberEntity;
 import com.Master.Auction.Entity.Board.BoardEntity;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import com.Master.Auction.Service.ImageService;
 import org.springframework.stereotype.Service;
 import com.Master.Auction.DTO.Board.BoardDTO;
 import org.springframework.data.domain.Page;
@@ -25,6 +26,7 @@ import java.io.File;
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
+    private final ImageService imageService;
     private final MemberRepository memberRepository;
     private final BoardFileRepository boardFileRepository;
     private final CommentRepository commentRepository;
@@ -51,16 +53,17 @@ public class BoardService {
             boardRepository.save(boardEntity);
         } else {
             MultipartFile boardFile = boardDTO.getBoardFile();
+
+            String s3Url = imageService.imageUploadFromFile(boardFile);
+
             String originalFilename = boardFile.getOriginalFilename();
             String storedFileName = System.currentTimeMillis() + "_" + originalFilename;
-            String savePath = "C:/Users/wjaud/OneDrive/바탕 화면/MOST IMPORTANT/Master-The-Auction/Board/" + storedFileName;
-            boardFile.transferTo(new File(savePath));
 
             BoardEntity boardEntity = BoardEntity.toSaveFileEntity(boardDTO, memberEntity);
             Long savedId = boardRepository.save(boardEntity).getId();
             BoardEntity savedBoardEntity = boardRepository.findById(savedId).get();
 
-            BoardFileEntity boardFileEntity = BoardFileEntity.toBoardFileEntity(savedBoardEntity, originalFilename, storedFileName);
+            BoardFileEntity boardFileEntity = BoardFileEntity.toBoardFileEntity(savedBoardEntity, storedFileName, s3Url);
             boardFileRepository.save(boardFileEntity);
         }
     }
@@ -107,11 +110,9 @@ public class BoardService {
         MemberEntity memberEntity = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + memberId));
 
-        // 기존 게시글 조회 (없으면 예외 발생)
         BoardEntity existingBoardEntity = boardRepository.findById(boardDTO.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid board ID: " + boardDTO.getId()));
 
-        // 파일이 없을 경우 내용만 업데이트
         if (boardDTO.getBoardFile().isEmpty()) {
             existingBoardEntity.setBoardPass(boardDTO.getBoardPass());
             existingBoardEntity.setBoardTitle(boardDTO.getBoardTitle());
@@ -121,13 +122,18 @@ public class BoardService {
             existingBoardEntity.setHatesCount(boardDTO.getHatesCount());
             existingBoardEntity.setMemberEntity(memberEntity);
         } else {
+            List<BoardFileEntity> existingFiles = boardFileRepository.findByBoardEntity(existingBoardEntity);
+            for (BoardFileEntity file : existingFiles) {
+                imageService.deleteImage(file.getStoredFileName());
+                boardFileRepository.delete(file);
+            }
+
             MultipartFile boardFile = boardDTO.getBoardFile();
+            String s3Url = imageService.imageUploadFromFile(boardFile);
+
             String originalFilename = boardFile.getOriginalFilename();
             String storedFileName = System.currentTimeMillis() + "_" + originalFilename;
-            String savePath = "C:/Users/wjaud/OneDrive/바탕 화면/MOST IMPORTANT/Master-The-Auction/Board/" + storedFileName;
-            boardFile.transferTo(new File(savePath));
 
-            // 파일 정보 업데이트
             existingBoardEntity.setBoardPass(boardDTO.getBoardPass());
             existingBoardEntity.setFileAttached(1);
             existingBoardEntity.setBoardTitle(boardDTO.getBoardTitle());
@@ -137,14 +143,36 @@ public class BoardService {
             existingBoardEntity.setHatesCount(boardDTO.getHatesCount());
             existingBoardEntity.setMemberEntity(memberEntity);
 
-            // 파일 엔티티 생성 및 저장
-            BoardFileEntity boardFileEntity = BoardFileEntity.toBoardFileEntity(existingBoardEntity, originalFilename, storedFileName);
+            BoardFileEntity boardFileEntity = BoardFileEntity.toBoardFileEntity(existingBoardEntity, storedFileName, s3Url);
             boardFileRepository.save(boardFileEntity);
         }
 
-        // 변경 내용 저장 (JPA가 변경 감지하여 UPDATE 수행)
         boardRepository.save(existingBoardEntity);
         return findById(boardDTO.getId());
+    }
+
+    public Page<BoardDTO> WriteList(Pageable pageable, Long id) {
+        int page = pageable.getPageNumber() - 1;
+        int pageLimit = 10;
+
+        Page<BoardEntity> boardEntities = boardRepository.findByMemberEntity_Id(
+                id,
+                PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id"))
+        );
+
+        Page<BoardDTO> boardDTOS = boardEntities.map(board ->
+                new BoardDTO(
+                        board.getId(),
+                        board.getBoardTitle(),
+                        board.getBoardHits(),
+                        board.getBoardCreatedTime(),
+                        board.getMemberEntity().getMemberName(),
+                        board.getLikesCount(),
+                        board.getMemberEntity().getId()
+                )
+        );
+
+        return boardDTOS;
     }
 
 }

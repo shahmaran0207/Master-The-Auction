@@ -1,7 +1,7 @@
 package com.Master.Auction.Controller.Board;
 
-import com.Master.Auction.Service.Board.BoardService;
 import com.Master.Auction.Service.Board.CommentService;
+import com.Master.Auction.Service.Board.BoardService;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
@@ -99,5 +99,17 @@ public class BoardController {
             }
         }
         return null;
+    }
+
+    @GetMapping("/WriteList/{id}")
+    public String WriteList(@PageableDefault(page = 1) Pageable pageable, Model model, @PathVariable Long id) {
+        Page<BoardDTO> WriteList = boardService.WriteList(pageable, id);
+        int blockLimit = 10;
+        int startPage = (((int)(Math.ceil((double)pageable.getPageNumber() / blockLimit))) - 1) * blockLimit + 1;
+        int endPage = ((startPage + blockLimit - 1) < WriteList.getTotalPages()) ? startPage + blockLimit - 1 : WriteList.getTotalPages();
+        model.addAttribute("boardList", WriteList);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+        return "Board/WriteList";
     }
 }
