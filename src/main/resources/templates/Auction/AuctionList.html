@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>MTA - 경매 물품 목록</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="flex flex-col min-h-screen">
+<div th:replace="~{header :: header}"></div>
+
+<main class="flex flex-col items-center flex-1 py-20">
+    <div class="w-full max-w-7xl auction-card">
+    <div class="auction-header text-xl">내가 등록한 경매 물품</div>
+
+        <div class="p-6 flex-grow">
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>물품 등록자</th>
+                    <th>경매 물품</th>
+                    <th>경매 물품 설명</th>
+                    <th>경매 마감 시간</th>
+                    <th>현재 입찰 최고가</th>
+                    <th>조회수</th>
+                    <th>경매 진행 상황</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <tr th:each="auction: ${AuctionList}">
+                    <td class="text-center" th:text="${auction.id}"></td>
+                    <td style="text-align: center">
+                        <a th:href="@{|/Auction/${auction.id}|(page=${AuctionList.number + 1})}"
+                           th:text="${auction.memberName}"
+                           class="text-yellow-300 hover:underline"></a>
+                    </td>
+                    <td class="text-center" th:text="${auction.auctionTitle}"></td>
+                    <td class="text-center" th:text="${auction.auctionContent}"></td>
+                    <td class="text-center" th:text="${auction.endTime}"></td>
+                    <td class="text-center" th:text="${auction.maxPrice}"></td>
+                    <td class="text-center" th:text="${auction.auctionHits}"></td>
+                    <td class="text-center">
+                        <span th:if="${auction.auctionStatus == 'not finished'}" style="color: green; font-weight: bold;">경매 진행 중</span>
+                        <span th:if="${auction.auctionStatus != 'not finished'}" style="color: red; font-weight: bold;">경매 종료</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination flex justify-center gap-2 mt-6 p-4">
+            <a th:href="@{/Auction/list(page=1, status=${status})}" class="btn-gold">First</a>
+            <a th:href="${AuctionList.first} ? '#' : @{/Auction/list(page=${AuctionList.number}, status=${status})}" class="btn-gold">Prev</a>
+
+            <span th:each="page: ${#numbers.sequence(startPage, endPage)}" class="btn-gold">
+        <span th:if="${page == AuctionList.number + 1}" th:text="${page}"></span>
+        <a th:unless="${page == AuctionList.number + 1}"
+           th:href="@{/Auction/list(page=${page}, status=${status})}" th:text="${page}"></a>
+    </span>
+
+            <a th:href="${AuctionList.last} ? '#' : @{/Auction/list(page=${AuctionList.number + 2}, status=${status})}" class="btn-gold">Next</a>
+            <a th:href="@{/Auction/list(page=${AuctionList.totalPages}, status=${status})}" class="btn-gold">Last</a>
+        </div>
+
+    </div>
+</main>
+<div th:replace="~{footer :: footer}"></div>
+</body>
+
+</html>

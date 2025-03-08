@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>MTA - WriteList</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="flex flex-col min-h-screen">
+<div th:replace="~{header :: header}"></div>
+
+<main class="flex flex-col items-center flex-1 py-20">
+    <div class="w-full max-w-7xl auction-card">
+    <div class="auction-header text-xl">내가 작성한 글</div>
+
+        <div class="p-6 flex-grow">
+
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>제목</th>
+                    <th>작성자</th>
+                    <th>작성 시간</th>
+                    <th>조회수</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <tr th:each="board: ${boardList}">
+                    <td class="text-center" th:text="${board.id}"></td>
+                    <td style="text-align: center">
+                        <a th:href="@{|/Board/${board.id}|(page=${boardList.number + 1})}"
+                           th:text="${board.boardTitle}"
+                           class="text-yellow-300 hover:underline"></a>
+                    </td>
+                    <td class="text-center" th:text="${board.memberName}"></td>
+                    <td class="text-center" th:text="${board.boardCreatedTime}"></td>
+                    <td class="text-center" th:text="${board.boardHits}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination flex justify-center gap-2 mt-6 p-4">
+            <a th:href="@{/Board/paging(page=1)}" class="btn-gold">First</a>
+            <a th:href="${boardList.first} ? '#' : @{/Board/paging(page=${boardList.number})}" class="btn-gold">Prev</a>
+
+            <span th:each="page: ${#numbers.sequence(startPage, endPage)}" class="btn-gold">
+                <span th:if="${page == boardList.number + 1}" th:text="${page}" ></span>
+                <a th:unless="${page == boardList.number + 1}"
+                   th:href="@{/Board/paging(page=${page})}" th:text="${page}"></a>
+            </span>
+
+            <a th:href="${boardList.last} ? '#' : @{/Board/paging(page=${boardList.number + 2})}" class="btn-gold">Next</a>
+            <a th:href="@{/Board/paging(page=${boardList.totalPages})}" class="btn-gold">Last</a>
+        </div>
+    </div>
+</main>
+<div th:replace="~{footer :: footer}"></div>
+</body>
+
+
+</html>

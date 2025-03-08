@@ -19,5 +19,5 @@ public interface AuctionRepository extends JpaRepository<AuctionEntity, Long> {
 
     Page<AuctionEntity> findByAuctionStatus(String auctionStatus, Pageable pageable);
 
-
+    Page<AuctionEntity> findByMemberEntity_Id(Long memberId, Pageable pageable);
 }
