@@ -43,7 +43,7 @@
             <div class="grid grid-cols-3 gap-6 mt-8">
                 <a th:href="@{/Member/delete/{id}(id=${member.id})}" class="btn-gold flex items-center justify-center h-16">회원 탈퇴</a>
                 <a th:href="@{/PayMent/payment}" class="btn-gold flex items-center justify-center h-16">경매 포인트 구매</a>
-                <a th:href="@{/Member/buylist/{id}(id=${member.id})}" class="btn-gold flex items-center justify-center h-16">내가 낙찰받은 내역</a>
+                <a th:href="@{/Member/buyList/{id}(id=${member.id})}" class="btn-gold flex items-center justify-center h-16">내가 낙찰받은 내역</a>
                 <a th:href="@{/Auction/AuctionList/{id}(id=${member.id})}" class="btn-gold flex items-center justify-center h-16">내가 등록한 경매 물품</a>
                 <a th:href="@{/Board/WriteList/{id}(id=${member.id})}" class="btn-gold flex items-center justify-center h-16">내가 작성한 글</a>
                 <button onclick="updateReq()" class="btn-gold flex items-center justify-center h-16">비밀번호 변경</button>

@@ -14,6 +14,4 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
     void updateHits(@Param("id") Long id);
 
     Page<BoardEntity> findByMemberEntity_Id(Long memberId, Pageable pageable);
-
-
 }
