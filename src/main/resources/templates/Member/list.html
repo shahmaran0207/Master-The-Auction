@@ -40,19 +40,26 @@
             </table>
         </div>
 
-        <div class="pagination flex justify-center gap-2 mt-6 p-4">
-            <a th:href="@{/Member/paging(page=1)}" class="btn-gold">First</a>
-            <a th:href="${memberList.first} ? '#' : @{/Member/paging(page=${memberList.number})}" class="btn-gold">Prev</a>
+        <div class="pagination flex justify-center gap-2 mt-6 p-4" th:if="${memberList.totalPages > 0}">
+            <a th:href="@{/Member/list(page=1)}" class="btn-gold">First</a>
+
+            <a th:if="${!memberList.first}" th:href="@{/Member/list(page=${memberList.number})}" class="btn-gold">Prev</a>
+            <span th:if="${memberList.first}" class="btn-gold disabled">Prev</span>
 
             <span th:each="page: ${#numbers.sequence(startPage, endPage)}" class="btn-gold">
-                <span th:if="${page == memberList.number + 1}" th:text="${page}" ></span>
-                <a th:unless="${page == memberList.number + 1}"
-                   th:href="@{/Member/paging(page=${page})}" th:text="${page}"></a>
-            </span>
+        <span th:if="${page == memberList.number + 1}" th:text="${page}" class="active"></span>
+        <a th:unless="${page == memberList.number + 1}"
+           th:href="@{/Member/list(page=${page})}"
+           th:text="${page}"></a>
+    </span>
 
-            <a th:href="${memberList.last} ? '#' : @{/Member/paging(page=${memberList.number + 2})}" class="btn-gold">Next</a>
-            <a th:href="@{/Member/paging(page=${memberList.totalPages})}" class="btn-gold">Last</a>
+            <a th:if="${!memberList.last}" th:href="@{/Member/list(page=${memberList.number + 2})}" class="btn-gold">Next</a>
+            <span th:if="${memberList.last}" class="btn-gold disabled">Next</span>
+
+            <a th:href="@{/Member/list(page=${memberList.totalPages})}" class="btn-gold">Last</a>
         </div>
+
+
     </div>
 </main>
 <div th:replace="~{footer :: footer}"></div>

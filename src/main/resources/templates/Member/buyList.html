@@ -19,9 +19,8 @@
                 <thead>
                 <tr>
                     <th>ID</th>
-                    <th>물품 등록자</th>
+                    <th>경매 물품 등록자</th>
                     <th>경매 물품</th>
-                    <th>경매 물품 설명</th>
                     <th>낙찰 받은 금액</th>
                 </tr>
                 </thead>
@@ -29,35 +28,33 @@
 
                 <tr th:each="buylist: ${BuyList}">
                     <td class="text-center" th:text="${buylist.id}"></td>
+                    <td class="text-center" th:text="${buylist.getAuctionRegistrar()}"></td>
                     <td style="text-align: center">
-                        <a th:href="@{/Member/buyList/${buylist.id}|(page=${AuctionList.number + 1})}"
-                           th:text="${buylist.memberName}"
-                           class="text-yellow-300 hover:underline"></a>
-
+                        <a th:href="@{/Member/buyDetail/{id}(id=${buylist.auctionId})}"
+                           th:text="${buylist.auctionTitle}"
                            class="text-yellow-300 hover:underline"></a>
                     </td>
-                    <td class="text-center" th:text="${buylist.auctionTitle}"></td>
-                    <td class="text-center" th:text="${buylist.auctionContent}"></td>
-                    <td class="text-center" th:text="${buylist.maxPrice}"></td>
+
+                    <td class="text-center" th:text="${buylist.winningPrice}"></td>
                 </tr>
                 </tbody>
             </table>
         </div>
 
-        <div class="pagination flex justify-center gap-2 mt-6 p-4">
-            <a th:href="@{/BuyList/list(page=1)}" class="btn-gold">First</a>
-
-            <a th:href="${BuyList.first} ? '#' : @{/BuyList/list(page=${BuyList.number})}" class="btn-gold">Prev</a>
+        <div class="pagination flex justify-center gap-2 mt-6 p-4" th:if="${BuyList.totalPages > 0}">
+            <a th:href="@{/Member/buyList/{id}(id=${loginId}, page=1)}" class="btn-gold">First</a>
+            <a th:if="${!BuyList.first}" th:href="@{/Member/buyList/{id}(id=${loginId}, page=${BuyList.number})}" class="btn-gold">Prev</a>
 
             <span th:each="page: ${#numbers.sequence(startPage, endPage)}" class="btn-gold">
         <span th:if="${page == BuyList.number + 1}" th:text="${page}"></span>
         <a th:unless="${page == BuyList.number + 1}"
-           th:href="@{/BuyList/list(page=${page})}" th:text="${page}"></a>
+           th:href="@{/Member/buyList/{id}(id=${loginId}, page=${page})}" th:text="${page}"></a>
     </span>
 
-            <a th:href="${BuyList.last} ? '#' : @{/BuyList/list(page=${BuyList.number + 2})}" class="btn-gold">Next</a>
-            <a th:href="@{/BuyList/list(page=${BuyList.totalPages})}" class="btn-gold">Last</a>
+            <a th:if="${!BuyList.last}" th:href="@{/Member/buyList/{id}(id=${loginId}, page=${BuyList.number + 2})}" class="btn-gold">Next</a>
+            <a th:href="@{/Member/buyList/{id}(id=${loginId}, page=${BuyList.totalPages})}" class="btn-gold">Last</a>
         </div>
+
 
     </div>
 </main>

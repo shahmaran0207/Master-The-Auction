@@ -43,19 +43,21 @@
             </table>
         </div>
 
-        <div class="pagination flex justify-center gap-2 mt-6 p-4">
-            <a th:href="@{/Board/paging(page=1)}" class="btn-gold">First</a>
-            <a th:href="${boardList.first} ? '#' : @{/Board/paging(page=${boardList.number})}" class="btn-gold">Prev</a>
+        <div class="pagination flex justify-center gap-2 mt-6 p-4" th:if="${boardList.totalPages > 0}">
+            <a th:href="@{/Board/WriteList/{id}(id=${loginId}, page=1)}" class="btn-gold">First</a>
+            <a th:if="${!boardList.first}" th:href="@{/Board/WriteList/{id}(id=${loginId}, page=${boardList.number})}" class="btn-gold">Prev</a>
 
             <span th:each="page: ${#numbers.sequence(startPage, endPage)}" class="btn-gold">
-                <span th:if="${page == boardList.number + 1}" th:text="${page}" ></span>
-                <a th:unless="${page == boardList.number + 1}"
-                   th:href="@{/Board/paging(page=${page})}" th:text="${page}"></a>
-            </span>
+        <span th:if="${page == boardList.number + 1}" th:text="${page}"></span>
+        <a th:unless="${page == boardList.number + 1}"
+           th:href="@{/Board/WriteList/{id}(id=${loginId}, page=${page})}" th:text="${page}"></a>
+    </span>
 
-            <a th:href="${boardList.last} ? '#' : @{/Board/paging(page=${boardList.number + 2})}" class="btn-gold">Next</a>
-            <a th:href="@{/Board/paging(page=${boardList.totalPages})}" class="btn-gold">Last</a>
+            <a th:if="${!boardList.last}" th:href="@{/Board/WriteList/{id}(id=${loginId}, page=${boardList.number + 2})}" class="btn-gold">Next</a>
+            <a th:href="@{/Board/WriteList/{id}(id=${loginId}, page=${boardList.totalPages})}" class="btn-gold">Last</a>
         </div>
+
+
     </div>
 </main>
 <div th:replace="~{footer :: footer}"></div>

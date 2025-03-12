@@ -50,19 +50,29 @@
             </table>
         </div>
 
-        <div class="pagination flex justify-center gap-2 mt-6 p-4">
-            <a th:href="@{/QnA/paging(page=1)}" class="btn-gold">First</a>
-            <a th:href="${questionEntityList.first} ? '#' : @{/QnA/paging(page=${questionEntityList.number})}" class="btn-gold">Prev</a>
+        <div class="pagination flex justify-center gap-2 mt-6 p-4" th:if="${questionEntityList.totalPages > 0}">
+            <a th:href="@{/QnA/list(page=1)}" class="btn-gold">First</a>
 
-            <span th:each="page: ${#numbers.sequence(startPage, endPage)}" class="btn-gold">
-                <span th:if="${page == questionEntityList.number + 1}" th:text="${page}" ></span>
-                <a th:unless="${page == questionEntityList.number + 1}"
-                   th:href="@{/QnA/paging(page=${page})}" th:text="${page}"></a>
-            </span>
+            <a th:if="${questionEntityList.number > 0}"
+               th:href="@{/QnA/list(page=${questionEntityList.number})}"
+               class="btn-gold">Prev</a>
+            <span th:if="${questionEntityList.first}" class="btn-gold disabled">Prev</span>
 
-            <a th:href="${questionEntityList.last} ? '#' : @{/QnA/paging(page=${AuctionList.number + 2})}" class="btn-gold">Next</a>
-            <a th:href="@{/QnA/paging(page=${questionEntityList.totalPages})}" class="btn-gold">Last</a>
+            <span th:each="page: ${#numbers.sequence(startPage, (endPage > 0 ? endPage : 1))}" class="btn-gold">
+        <span th:if="${page == questionEntityList.number + 1}" th:text="${page}" class="active"></span>
+        <a th:unless="${page == questionEntityList.number + 1}"
+           th:href="@{/QnA/list(page=${page})}"
+           th:text="${page}"></a>
+    </span>
+
+            <a th:if="${questionEntityList.number + 1 < questionEntityList.totalPages}"
+               th:href="@{/QnA/list(page=${questionEntityList.number + 2})}"
+               class="btn-gold">Next</a>
+            <span th:if="${questionEntityList.last}" class="btn-gold disabled">Next</span>
+
+            <a th:href="@{/QnA/list(page=${questionEntityList.totalPages})}" class="btn-gold">Last</a>
         </div>
+
     </div>
 </main>
 <div th:replace="~{footer :: footer}"></div>

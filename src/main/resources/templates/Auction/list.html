@@ -45,12 +45,13 @@
 
                 <tr th:each="auction: ${AuctionList}">
                     <td class="text-center" th:text="${auction.id}"></td>
+                    <td class="text-center" th:text="${auction.memberName}"></td>
                     <td style="text-align: center">
                         <a th:href="@{|/Auction/${auction.id}|(page=${AuctionList.number + 1})}"
-                           th:text="${auction.memberName}"
+                           th:text="${auction.auctionTitle}"
                            class="text-yellow-300 hover:underline"></a>
                     </td>
-                    <td class="text-center" th:text="${auction.auctionTitle}"></td>
+
                     <td class="text-center" th:text="${auction.auctionContent}"></td>
                     <td class="text-center" th:text="${auction.endTime}"></td>
                     <td class="text-center" th:text="${auction.maxPrice}"></td>
@@ -64,9 +65,9 @@
             </table>
         </div>
 
-        <div class="pagination flex justify-center gap-2 mt-6 p-4">
+        <div class="pagination flex justify-center gap-2 mt-6 p-4" th:if="${AuctionList.totalPages > 0}">
             <a th:href="@{/Auction/list(page=1, status=${status})}" class="btn-gold">First</a>
-            <a th:href="${AuctionList.first} ? '#' : @{/Auction/list(page=${AuctionList.number}, status=${status})}" class="btn-gold">Prev</a>
+            <a th:if="${!AuctionList.first}" th:href="@{/Auction/list(page=${AuctionList.number}, status=${status})}" class="btn-gold">Prev</a>
 
             <span th:each="page: ${#numbers.sequence(startPage, endPage)}" class="btn-gold">
         <span th:if="${page == AuctionList.number + 1}" th:text="${page}"></span>
@@ -74,9 +75,10 @@
            th:href="@{/Auction/list(page=${page}, status=${status})}" th:text="${page}"></a>
     </span>
 
-            <a th:href="${AuctionList.last} ? '#' : @{/Auction/list(page=${AuctionList.number + 2}, status=${status})}" class="btn-gold">Next</a>
+            <a th:if="${!AuctionList.last}" th:href="@{/Auction/list(page=${AuctionList.number + 2}, status=${status})}" class="btn-gold">Next</a>
             <a th:href="@{/Auction/list(page=${AuctionList.totalPages}, status=${status})}" class="btn-gold">Last</a>
         </div>
+
 
     </div>
 </main>
