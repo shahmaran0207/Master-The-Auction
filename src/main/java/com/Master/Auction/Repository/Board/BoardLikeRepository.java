@@ -7,6 +7,8 @@ import com.Master.Auction.Entity.Board.BoardEntity;
 
 public interface BoardLikeRepository extends JpaRepository<BoardLikeEntity, Long> {
     boolean existsByMemberEntityAndBoardEntity(MemberEntity member, BoardEntity board);
+
     int countByBoardEntity(BoardEntity board);
+
     void deleteByMemberEntityAndBoardEntity(MemberEntity member, BoardEntity board);
 }

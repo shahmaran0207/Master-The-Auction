@@ -6,6 +6,8 @@ import com.Master.Auction.Entity.Member.MemberEntity;
 
 public interface MemberHateRepository extends JpaRepository<MemberHateEntity, Long> {
     boolean existsByHaterAndTargetHater(MemberEntity hater, MemberEntity target_hater);
+
     void deleteByHaterAndTargetHater(MemberEntity hater, MemberEntity target_hater);
+
     int countByTargetHater(MemberEntity target_hater);
 }

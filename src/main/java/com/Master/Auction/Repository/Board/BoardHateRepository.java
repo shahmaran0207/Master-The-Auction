@@ -6,6 +6,8 @@ import com.Master.Auction.Entity.Board.BoardEntity;
 
 public interface BoardHateRepository extends JpaRepository<BoardHateEntity, Long> {
     boolean existsByMemberEntityAndBoardEntity(com.Master.Auction.Entity.Member.MemberEntity member, BoardEntity board);
+
     int countByBoardEntity(BoardEntity board);
+
     void deleteByMemberEntityAndBoardEntity(com.Master.Auction.Entity.Member.MemberEntity member, BoardEntity board);
 }

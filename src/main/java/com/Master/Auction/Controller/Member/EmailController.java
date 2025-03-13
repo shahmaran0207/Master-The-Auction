@@ -3,6 +3,7 @@ package com.Master.Auction.Controller.Member;
 import com.Master.Auction.Service.Member.EmailService;
 import org.springframework.web.bind.annotation.*;
 import com.Master.Auction.DTO.Member.EmailDTO;
+import java.io.UnsupportedEncodingException;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,7 @@ public class EmailController {
 
     // 인증코드 메일 발송
     @PostMapping("/send")
-    public String mailSend(EmailDTO emailDto) throws MessagingException {
+    public String mailSend(EmailDTO emailDto) throws MessagingException, UnsupportedEncodingException {
         log.info("EmailController.mailSend()");
         emailService.sendEmail(emailDto.getMail());
         return "인증코드가 발송되었습니다.";
