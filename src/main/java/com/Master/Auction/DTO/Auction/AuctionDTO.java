@@ -73,8 +73,26 @@ public class AuctionDTO {
         } else {
             auctionDTO.setFileAttached(auctionEntity.getFileAttached());
             auctionDTO.setOriginalFileName(auctionEntity.getAuctionFileEntities().get(0).getOriginalFileName());
-            auctionDTO.setStoredFileName(auctionEntity.getAuctionFileEntities().get(0).getStoredFileName());
+            String storedFileName = auctionEntity.getAuctionFileEntities().get(0).getStoredFileName();
+
+            storedFileName = auctionDTO.convertS3Url(storedFileName);
+            auctionDTO.setStoredFileName(storedFileName);
         }
         return auctionDTO;
+    }
+
+    public String getFileName(String storedFileName) {
+        String baseUrl = "https://www.mta.com.s3.ap-northeast-2.amazonaws.com/";
+        if (storedFileName.startsWith(baseUrl)) {
+            return storedFileName.substring(baseUrl.length());
+        }
+        return storedFileName;
+    }
+
+    private String convertS3Url(String storedFileName) {
+        String region = "ap-northeast-2";
+        String bucketName = "www.mta.com";
+        String fileName= getFileName(storedFileName);
+        return "https://s3." + region + ".amazonaws.com/" + bucketName + "/" + fileName;
     }
 }

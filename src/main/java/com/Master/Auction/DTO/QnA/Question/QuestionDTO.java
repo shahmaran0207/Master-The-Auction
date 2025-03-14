@@ -66,7 +66,10 @@ public class QuestionDTO {
         } else {
             questionDTO.setFileAttached(questionEntity.getFileAttached());
             questionDTO.setOriginalFileName(questionEntity.getQuestionFileEntityList().get(0).getOriginalFileName());
-            questionDTO.setStoredFileName(questionEntity.getQuestionFileEntityList().get(0).getStoredFileName());
+            String storedFileName = questionEntity.getQuestionFileEntityList().get(0).getStoredFileName();
+
+            storedFileName = questionDTO.convertS3Url(storedFileName);
+            questionDTO.setStoredFileName(storedFileName);
         }
 
         return questionDTO;
@@ -76,5 +79,20 @@ public class QuestionDTO {
         QuestionEntity questionEntity = new QuestionEntity();
         questionEntity.setId(questionDTO.getId());
         return questionEntity;
+    }
+
+    public String getFileName(String storedFileName) {
+        String baseUrl = "https://www.mta.com.s3.ap-northeast-2.amazonaws.com/";
+        if (storedFileName.startsWith(baseUrl)) {
+            return storedFileName.substring(baseUrl.length());
+        }
+        return storedFileName;
+    }
+
+    private String convertS3Url(String storedFileName) {
+        String region = "ap-northeast-2";
+        String bucketName = "www.mta.com";
+        String fileName= getFileName(storedFileName);
+        return "https://s3." + region + ".amazonaws.com/" + bucketName + "/" + fileName;
     }
 }

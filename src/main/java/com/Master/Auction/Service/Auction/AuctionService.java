@@ -10,6 +10,7 @@ import com.Master.Auction.Entity.Member.MemberEntity;
 import org.springframework.data.domain.PageRequest;
 import com.Master.Auction.DTO.Auction.AuctionDTO;
 import org.springframework.data.domain.Pageable;
+import com.Master.Auction.Service.ImageService;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Page;
@@ -18,28 +19,36 @@ import lombok.RequiredArgsConstructor;
 import java.time.LocalDateTime;
 import java.io.IOException;
 import java.util.Optional;
-import java.io.File;
 
 @Service
 @RequiredArgsConstructor
 public class AuctionService {
     private final AuctionRepository auctionRepository;
     private final MemberRepository memberRepository;
+    private final ImageService imageService;
     private final AuctionFileRepository auctionFileRepository;
 
-    public Page<AuctionDTO> paging(Pageable pageable) {
+    public Page<AuctionDTO> paging(Pageable pageable, String status) {
         int page = pageable.getPageNumber() - 1;
         int pageLimit = 10;
 
-        Page<AuctionEntity> boardEntities =
-                auctionRepository.findAll(PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
+        Page<AuctionEntity> auctionEntities;
 
-        Page<AuctionDTO> auctionDTOS = boardEntities.map(auction ->
-                new AuctionDTO(auction.getId(), auction.getAuctionTitle(), auction.getAuctionContents(),auction.getStartTime(),
+        PageRequest pageRequest = PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id"));
+
+        if (status == null || status.isEmpty()) {
+            auctionEntities = auctionRepository.findAll(pageRequest);
+        } else {
+            auctionEntities = auctionRepository.findByAuctionStatus(status, pageRequest);
+        }
+
+        return auctionEntities.map(auction ->
+                new AuctionDTO(auction.getId(), auction.getAuctionTitle(), auction.getAuctionContents(), auction.getStartTime(),
                         auction.getEndTime(), auction.getStartPrice(), auction.getMinPrice(), auction.getMaxPrice(),
                         auction.getAuctionHits(), auction.getMemberEntity().getMemberName(), auction.getAuctionStatus(), auction.getMemberEntity().getId()));
-        return auctionDTOS;
     }
+
+
 
     public void save(AuctionDTO auctionDTO, LocalDateTime endTime, Long id) throws IOException {
         MemberEntity memberEntity = memberRepository.findById(id)
@@ -50,16 +59,17 @@ public class AuctionService {
             auctionRepository.save(auctionEntity);
         } else {
             MultipartFile auctionFile = auctionDTO.getAuctionImage();
+
+            String s3Url = imageService.imageUploadFromFile(auctionFile);
+
             String originalFilename = auctionFile.getOriginalFilename();
             String storedFileName = System.currentTimeMillis() + "_" + originalFilename;
-            String savePath = "C:/Users/wjaud/OneDrive/바탕 화면/MOST IMPORTANT/Master-The-Auction/Auction/" + storedFileName;
-            auctionFile.transferTo(new File(savePath));
 
-            AuctionEntity auctionEntity = AuctionEntity.toSaveEntity(auctionDTO, memberEntity, endTime);
+            AuctionEntity auctionEntity = AuctionEntity.toSaveFileEntity(auctionDTO, memberEntity, endTime);
             Long auctionId = auctionRepository.save(auctionEntity).getId();
             AuctionEntity savedAuctionEntity = auctionRepository.findById(auctionId).get();
 
-            AuctionFileEntity auctionFileEntity = AuctionFileEntity.toAuctionFileEntity(savedAuctionEntity, originalFilename, storedFileName);
+            AuctionFileEntity auctionFileEntity = AuctionFileEntity.toAuctionFileEntity(savedAuctionEntity, storedFileName, s3Url);
             auctionFileRepository.save(auctionFileEntity);
         }
     }
@@ -78,5 +88,21 @@ public class AuctionService {
         } else {
             return null;
         }
+    }
+
+    public Page<AuctionDTO> AuctionList(Pageable pageable, Long id) {
+        int page = pageable.getPageNumber() - 1;
+        int pageLimit = 10;
+
+        Page<AuctionEntity> auctionEntities;
+
+            auctionEntities = auctionRepository.findByMemberEntity_Id(id,
+                    PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id"))
+            );
+
+        return auctionEntities.map(auction ->
+                new AuctionDTO(auction.getId(), auction.getAuctionTitle(), auction.getAuctionContents(), auction.getStartTime(),
+                        auction.getEndTime(), auction.getStartPrice(), auction.getMinPrice(), auction.getMaxPrice(),
+                        auction.getAuctionHits(), auction.getMemberEntity().getMemberName(), auction.getAuctionStatus(), auction.getMemberEntity().getId()));
     }
 }

@@ -102,11 +102,13 @@ public class BoardController {
     }
 
     @GetMapping("/WriteList/{id}")
-    public String WriteList(@PageableDefault(page = 1) Pageable pageable, Model model, @PathVariable Long id) {
+    public String WriteList(@PageableDefault(page = 1) Pageable pageable, Model model, @PathVariable Long id,
+                            @CookieValue(value = "loginId", defaultValue = "") String loginId) {
         Page<BoardDTO> WriteList = boardService.WriteList(pageable, id);
         int blockLimit = 10;
         int startPage = (((int)(Math.ceil((double)pageable.getPageNumber() / blockLimit))) - 1) * blockLimit + 1;
         int endPage = ((startPage + blockLimit - 1) < WriteList.getTotalPages()) ? startPage + blockLimit - 1 : WriteList.getTotalPages();
+        model.addAttribute("loginId", loginId);
         model.addAttribute("boardList", WriteList);
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);

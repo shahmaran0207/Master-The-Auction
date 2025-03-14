@@ -61,8 +61,26 @@ public class BoardDTO {
         } else {
             boardDTO.setFileAttached(boardEntity.getFileAttached());
             boardDTO.setOriginalFileName(boardEntity.getBoardFileEntityList().get(0).getOriginalFileName());
-            boardDTO.setStoredFileName(boardEntity.getBoardFileEntityList().get(0).getStoredFileName());
+            String storedFileName = boardEntity.getBoardFileEntityList().get(0).getStoredFileName();
+
+            storedFileName = boardDTO.convertS3Url(storedFileName);
+            boardDTO.setStoredFileName(storedFileName);
         }
         return boardDTO;
+    }
+
+    public String getFileName(String storedFileName) {
+        String baseUrl = "https://www.mta.com.s3.ap-northeast-2.amazonaws.com/";
+        if (storedFileName.startsWith(baseUrl)) {
+            return storedFileName.substring(baseUrl.length());
+        }
+        return storedFileName;
+    }
+
+    private String convertS3Url(String storedFileName) {
+        String region = "ap-northeast-2";
+        String bucketName = "www.mta.com";
+        String fileName= getFileName(storedFileName);
+        return "https://s3." + region + ".amazonaws.com/" + bucketName + "/" + fileName;
     }
 }

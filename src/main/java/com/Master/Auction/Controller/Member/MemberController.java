@@ -1,8 +1,13 @@
 package com.Master.Auction.Controller.Member;
 
+import com.Master.Auction.Service.Auction.WinningBidService;
+import com.Master.Auction.Service.Auction.AuctionService;
 import com.Master.Auction.Service.Member.MemberService;
 import com.google.firebase.auth.FirebaseAuthException;
+import com.Master.Auction.Service.Auction.BidService;
 import org.springframework.data.web.PageableDefault;
+import com.Master.Auction.DTO.Auction.AuctionDTO;
+import com.Master.Auction.DTO.Auction.WinningDTO;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +31,9 @@ import java.util.Map;
 public class MemberController {
 
     private final MemberService memberService;
+    private final BidService bidService;
+    private final AuctionService auctionService;
+    private final WinningBidService winningBidService;
 
     @GetMapping("/save")
     public String save() {
@@ -216,6 +224,40 @@ public class MemberController {
 
         model.addAttribute("member", memberDTO);
         return "Member/myPage";
+    }
+
+    @GetMapping("/buyList/{id}")
+    public String buyList(@PageableDefault(page = 1) Pageable pageable, @CookieValue(value = "loginId", defaultValue = "") String loginId,
+                          @PathVariable Long id, Model model) {
+
+        Page<WinningDTO> auctionList = winningBidService.WinningBidList(pageable, id);
+
+        int blockLimit = 10;
+        int startPage = (((int)(Math.ceil((double)pageable.getPageNumber() / blockLimit))) - 1) * blockLimit + 1;
+        int endPage = ((startPage + blockLimit - 1) < auctionList.getTotalPages()) ? startPage + blockLimit - 1 : auctionList.getTotalPages();
+
+        model.addAttribute("loginId", loginId);
+        model.addAttribute("BuyList", auctionList);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+
+        return "Member/buyList";
+    }
+
+    @GetMapping("/buyDetail/{id}")
+    public String buyDetail(@PageableDefault(page = 1) Pageable pageable, @CookieValue(value = "loginId", defaultValue = "") String loginId,
+                          @PathVariable Long id, Model model) {
+
+        AuctionDTO auctionDTO = auctionService.findById(id);
+        Long auctionId = auctionDTO.getId();
+
+        WinningDTO winningDTO = winningBidService.findByAuctionId(auctionId);
+
+        model.addAttribute("auction", auctionDTO);
+        model.addAttribute("bidPrice", winningDTO.getWinningPrice());
+        model.addAttribute("page", pageable.getPageNumber());
+
+        return "Member/buyDetail";
     }
 
 }

@@ -1,5 +1,6 @@
 package com.Master.Auction.Entity.Member;
 
+import com.Master.Auction.Entity.Auction.WinningBidEntity;
 import com.Master.Auction.Entity.Auction.BidEntity;
 import com.Master.Auction.DTO.Member.MemberDTO;
 import jakarta.persistence.*;
@@ -56,6 +57,10 @@ public class MemberEntity {
 
     @OneToMany(mappedBy = "targetHater", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberHateEntity> hatedByMembers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<WinningBidEntity> winningBids = new ArrayList<>(); // 사용자가 낙찰받은 기록
+
 
 
     @OneToMany(mappedBy = "memberEntity", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)

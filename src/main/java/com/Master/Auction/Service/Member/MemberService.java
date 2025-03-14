@@ -9,6 +9,7 @@ import com.Master.Auction.Entity.Member.MemberEntity;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import com.Master.Auction.DTO.Member.MemberDTO;
+import com.Master.Auction.Service.ImageService;
 import org.springframework.stereotype.Service;
 import com.google.firebase.auth.FirebaseAuth;
 import org.springframework.data.domain.Page;
@@ -18,12 +19,12 @@ import lombok.RequiredArgsConstructor;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.List;
-import java.io.File;
 
 @Service
 @RequiredArgsConstructor
 public class MemberService {
 
+    private final ImageService imageService;
     private final MemberRepository memberRepository;
     private final MemberProfileRepository memberProfileRepository;
 
@@ -45,22 +46,23 @@ public class MemberService {
                 .setEmail(memberDTO.getMail())
                 .setPassword(memberDTO.getMemberPassword());
         UserRecord userRecord = FirebaseAuth.getInstance().createUser(request);
-        if (memberDTO.getMemberProfile() == null) {
+        if (memberDTO.getMemberProfile().isEmpty()) {
             MemberEntity memberEntity = MemberEntity.toSaveEntity(memberDTO);
             memberRepository.save(memberEntity);
 
         } else {
             MultipartFile memberProfile = memberDTO.getMemberProfile();
+
+            String s3Url = imageService.imageUploadFromFile(memberProfile);
+
             String originalFilename = memberProfile.getOriginalFilename();
             String storedFileName = System.currentTimeMillis() + "_" + originalFilename;
-            String savePath = "C:/Users/wjaud/OneDrive/바탕 화면/MOST IMPORTANT/Master-The-Auction/profile/" + storedFileName;
-            memberProfile.transferTo(new File(savePath));
 
             MemberEntity memberEntity = MemberEntity.toSaveMemberFile(memberDTO);
             Long savedId = memberRepository.save(memberEntity).getId();
             MemberEntity savedBoardEntity = memberRepository.findById(savedId).get();
 
-            MemberProfileEntity memberProfileEntity = MemberProfileEntity.toMemberProfileEntity(savedBoardEntity, originalFilename, storedFileName);
+            MemberProfileEntity memberProfileEntity = MemberProfileEntity.toMemberProfileEntity(savedBoardEntity, storedFileName, s3Url);
             memberProfileRepository.save(memberProfileEntity);
         }
     }
@@ -101,43 +103,40 @@ public class MemberService {
                 .setPassword(memberDTO.getMemberPassword());
         UserRecord userRecord = FirebaseAuth.getInstance().createUser(request);
 
-        MemberEntity exisitingMemberEntity = memberRepository.findById(memberDTO.getId())
+        MemberEntity existingMemberEntity = memberRepository.findById(memberDTO.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + memberDTO.getId()));
 
         if (!memberDTO.getMemberProfile().isEmpty()) {
-            List<MemberProfileEntity> existingProfiles = memberProfileRepository.findByMemberEntity(exisitingMemberEntity);
+            List<MemberProfileEntity> existingProfiles = memberProfileRepository.findByMemberEntity(existingMemberEntity);
 
             for (MemberProfileEntity profile : existingProfiles) {
-                String oldFilePath = "C:/Users/wjaud/OneDrive/바탕 화면/MOST IMPORTANT/Master-The-Auction/profile/" + profile.getStoredFileName();
-                File oldFile = new File(oldFilePath);
-                if (oldFile.exists()) {
-                    oldFile.delete();
-                }
+                // S3에서 기존 파일 삭제 (삭제 로직 필요 시 구현)
+                imageService.deleteImage(profile.getStoredFileName());
                 memberProfileRepository.delete(profile);
             }
 
             MultipartFile memberProfile = memberDTO.getMemberProfile();
+            String s3Url = imageService.imageUploadFromFile(memberProfile);
+
             String originalFilename = memberProfile.getOriginalFilename();
             String storedFileName = System.currentTimeMillis() + "_" + originalFilename;
-            String savePath = "C:/Users/wjaud/OneDrive/바탕 화면/MOST IMPORTANT/Master-The-Auction/profile/" + storedFileName;
-            memberProfile.transferTo(new File(savePath));
 
-            MemberProfileEntity memberProfileEntity = MemberProfileEntity.toMemberProfileEntity(exisitingMemberEntity, originalFilename, storedFileName);
+            MemberProfileEntity memberProfileEntity = MemberProfileEntity.toMemberProfileEntity(existingMemberEntity, storedFileName, s3Url);
             memberProfileRepository.save(memberProfileEntity);
         }
 
         if (!memberDTO.getMemberName().isEmpty()) {
-            exisitingMemberEntity.setMemberName(memberDTO.getMemberName());
+            existingMemberEntity.setMemberName(memberDTO.getMemberName());
         }
 
-        exisitingMemberEntity.setBirthday(exisitingMemberEntity.getBirthday());
-        exisitingMemberEntity.setHatesCount(exisitingMemberEntity.getHatesCount());
-        exisitingMemberEntity.setLikesCount(exisitingMemberEntity.getLikesCount());
-        exisitingMemberEntity.setMail(exisitingMemberEntity.getMail());
-        exisitingMemberEntity.setRole(exisitingMemberEntity.getRole());
-        exisitingMemberEntity.setMoney(exisitingMemberEntity.getMoney());
+        existingMemberEntity.setBirthday(existingMemberEntity.getBirthday());
+        existingMemberEntity.setHatesCount(existingMemberEntity.getHatesCount());
+        existingMemberEntity.setLikesCount(existingMemberEntity.getLikesCount());
+        existingMemberEntity.setMail(existingMemberEntity.getMail());
+        existingMemberEntity.setRole(existingMemberEntity.getRole());
+        existingMemberEntity.setMoney(existingMemberEntity.getMoney());
 
-        memberRepository.save(exisitingMemberEntity);
+        memberRepository.save(existingMemberEntity);
         return findById(memberDTO.getId());
     }
 

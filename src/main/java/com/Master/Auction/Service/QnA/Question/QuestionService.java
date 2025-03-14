@@ -10,6 +10,7 @@ import com.Master.Auction.DTO.QnA.Question.QuestionDTO;
 import com.Master.Auction.Entity.Member.MemberEntity;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import com.Master.Auction.Service.ImageService;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -17,7 +18,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import java.io.IOException;
 import java.util.Optional;
-import java.io.File;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +25,7 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
     private final MemberRepository memberRepository;
     private final QuestionFileRepository questionFileRepository;
+    private final ImageService imageService;
 
     public Page<QuestionDTO> paging(Pageable pageable) {
         int page = pageable.getPageNumber() - 1;
@@ -49,11 +50,10 @@ public class QuestionService {
             questionRepository.save(questionEntity);
         } else {
             MultipartFile questionFile = questionDTO.getQuestionFile();
+            String s3Url = imageService.imageUploadFromFile(questionFile);
+
             String originalFilename = questionFile.getOriginalFilename();
             String storedFileName = System.currentTimeMillis() + "_" + originalFilename;
-            String savePath = "C:/Users/wjaud/OneDrive/바탕 화면/MOST IMPORTANT/Master-The-Auction/Question/" + storedFileName;
-
-            questionFile.transferTo(new File(savePath));
 
             QuestionEntity questionEntity = QuestionEntity.toSaveFileEntity(questionDTO, memberEntity);
             Long savedId = questionRepository.save(questionEntity).getId();
@@ -61,7 +61,7 @@ public class QuestionService {
                     .orElseThrow(() -> new IllegalStateException("Question entity not found after saving."));
 
             QuestionFileEntity questionFileEntity = QuestionFileEntity.toQuestionFileEntity(
-                    savedQuestionEntity, originalFilename, storedFileName);
+                    savedQuestionEntity, storedFileName, s3Url);
             questionFileRepository.save(questionFileEntity);
         }
     }
