@@ -7,7 +7,7 @@
 - **Test ID**: `test@naver.com`  
 - **Test PW**: `testtest`
 
-<small>※ <strong>502 Bad Gateway</strong>가 뜰 경우 새로고침을 하면 서비스를 계속 이용하실 수 있습니다.</small>
+※ **502 Bad Gateway** _가 뜰 경우 새로고침을 하면 서비스를 계속 이용하실 수 있습니다._
  ---
 
 ## 1️⃣ Project Overview (프로젝트 개요)
