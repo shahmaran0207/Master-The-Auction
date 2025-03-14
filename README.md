@@ -1,6 +1,13 @@
 # 📣 Master-The-Auction 💰
 
 ---
+ 
+ ## 🌐 **[🔗 서비스 바로가기](https://mastertheauction.store/)**
+ 
+ - **Test ID**: `test@naver.com`  
+ - **Test PW**: `testtest`
+ 
+ ---
 
 ## 1️⃣ Project Overview (프로젝트 개요)
 
