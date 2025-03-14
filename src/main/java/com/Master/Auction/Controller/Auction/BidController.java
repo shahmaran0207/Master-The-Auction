@@ -11,7 +11,6 @@ import com.Master.Auction.DTO.Auction.BidDTO;
 import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.Cookie;
 
-
 @Controller
 @RequestMapping("/Bid")
 @RequiredArgsConstructor

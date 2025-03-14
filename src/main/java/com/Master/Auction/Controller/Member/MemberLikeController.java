@@ -26,5 +26,4 @@ public class MemberLikeController {
      public boolean checkLikeStatus(@PathVariable Long LikerId, @PathVariable Long targetId) {
         return memberLikeService.isLikedByMember(LikerId, targetId);
      }
-
 }

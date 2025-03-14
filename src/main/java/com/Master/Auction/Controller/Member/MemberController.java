@@ -63,12 +63,10 @@ public class MemberController {
         String idToken = request.get("idToken");
         try {
             // 1. 쿠키에서 기존 로그인 상태 확인
-
             String existingLoginId = getCookieValue(httpRequest, "loginId");
 
             if (existingLoginId != null) {
-                // 이미 로그인 상태라면 새로 로그인하지 않고 바로 성공 응답
-                return ResponseEntity.ok("/"); // 이미 로그인된 사용자
+                return ResponseEntity.ok("/");
             }
 
             // 2. Firebase 토큰 검증
@@ -191,7 +189,6 @@ public class MemberController {
         return "redirect:/";
     }
 
-    // 쿠키 삭제 유틸리티 메서드
     private void deleteCookie(HttpServletResponse response, String name) {
         Cookie cookie = new Cookie(name, null);
         cookie.setHttpOnly(true);
@@ -259,5 +256,4 @@ public class MemberController {
 
         return "Member/buyDetail";
     }
-
 }

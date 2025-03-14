@@ -51,7 +51,6 @@ public class MemberLikeService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid member ID")));
     }
 
-
     public boolean isLikedByMember(Long target, Long liker) {
         MemberEntity targetId = memberRepository.findById(target)
                 .orElseThrow(() -> new EntityNotFoundException("target not found with id: " + target));

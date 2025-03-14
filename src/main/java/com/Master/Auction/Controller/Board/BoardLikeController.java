@@ -25,5 +25,4 @@ public class BoardLikeController {
     public boolean checkLikeStatus(@PathVariable Long boardId, @PathVariable Long memberId) {
         return boardLikeService.isLikedByMember(boardId, memberId);
     }
-
 }

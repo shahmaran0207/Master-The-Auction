@@ -5,6 +5,7 @@ import com.Master.Auction.Repository.Board.CommentRepository;
 import com.Master.Auction.Repository.Member.MemberRepository;
 import com.Master.Auction.Repository.Board.BoardRepository;
 import com.Master.Auction.Entity.Board.BoardFileEntity;
+import com.Master.Auction.Service.S3Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.Master.Auction.Entity.Member.MemberEntity;
 import com.Master.Auction.Entity.Board.BoardEntity;
@@ -25,6 +26,7 @@ import java.io.File;
 @Service
 @RequiredArgsConstructor
 public class BoardService {
+    private final S3Service s3Service;
     private final BoardRepository boardRepository;
     private final ImageService imageService;
     private final MemberRepository memberRepository;
@@ -94,17 +96,16 @@ public class BoardService {
         }
         else {
             for (BoardFileEntity file : boardFiles) {
-                String filePath = "/Board/" + file.getStoredFileName(); // 저장된 파일 경로
-                File fileToDelete = new File(filePath);
-                if (fileToDelete.exists()) {
-                    fileToDelete.delete(); // 실제 파일 삭제
-                }
-                boardFileRepository.deleteByBoardEntity_Id(id);
+                String storedFileName = file.getStoredFileName(); // S3에 저장된 파일 이름
+                s3Service.deleteFile(storedFileName); // S3에서 파일 삭제
+            }
+
+            boardFileRepository.deleteByBoardEntity_Id(id);
                 commentRepository.deleteByBoardEntity_Id(id);
                 boardRepository.deleteById(id);
             }
         }
-    }
+
 
     public BoardDTO update(BoardDTO boardDTO, Long memberId) throws IOException {
         MemberEntity memberEntity = memberRepository.findById(memberId)

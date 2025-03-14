@@ -38,8 +38,6 @@ public class AnswerService {
         if (optionalAnswerEntity.isPresent()) {
             AnswerEntity answerEntity = optionalAnswerEntity.get();
             return AnswerDTO.toAnswerDTO(answerEntity);
-        } else {
-            return null;
-        }
+        } else  return null;
     }
 }

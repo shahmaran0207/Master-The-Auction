@@ -26,6 +26,4 @@ public class BoardHateController {
     public boolean checkHateStatus(@PathVariable Long boardId, @PathVariable Long memberId) {
         return boardHateService.isHatedByMember(boardId, memberId);
     }
-
 }
-

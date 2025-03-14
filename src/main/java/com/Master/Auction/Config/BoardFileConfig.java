@@ -16,4 +16,3 @@ public class BoardFileConfig implements WebMvcConfigurer {
                 .addResourceLocations(savePath);
     }
 }
-

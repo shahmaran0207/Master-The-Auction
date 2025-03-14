@@ -15,6 +15,4 @@ public class AuctionFileConfig implements WebMvcConfigurer {
         registry.addResourceHandler(resourcePath)
                 .addResourceLocations(savePath);
     }
-
 }
-

@@ -15,6 +15,4 @@ public class QuestionFileConfig implements WebMvcConfigurer {
         registry.addResourceHandler(resourcePath)
                 .addResourceLocations(savePath);
     }
-
 }
-

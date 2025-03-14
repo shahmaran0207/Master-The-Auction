@@ -110,7 +110,6 @@ public class MemberService {
             List<MemberProfileEntity> existingProfiles = memberProfileRepository.findByMemberEntity(existingMemberEntity);
 
             for (MemberProfileEntity profile : existingProfiles) {
-                // S3에서 기존 파일 삭제 (삭제 로직 필요 시 구현)
                 imageService.deleteImage(profile.getStoredFileName());
                 memberProfileRepository.delete(profile);
             }
