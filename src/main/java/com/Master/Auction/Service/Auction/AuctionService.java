@@ -103,6 +103,7 @@ public class AuctionService {
         return auctionEntities.map(auction ->
                 new AuctionDTO(auction.getId(), auction.getAuctionTitle(), auction.getAuctionContents(), auction.getStartTime(),
                         auction.getEndTime(), auction.getStartPrice(), auction.getMinPrice(), auction.getMaxPrice(),
-                        auction.getAuctionHits(), auction.getMemberEntity().getMemberName(), auction.getAuctionStatus(), auction.getMemberEntity().getId()));
+                        auction.getAuctionHits(), auction.getMemberEntity().getMemberName(), auction.getAuctionStatus(),
+                        auction.getMemberEntity().getId()));
     }
 }

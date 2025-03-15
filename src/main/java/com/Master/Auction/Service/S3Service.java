@@ -1,6 +1,7 @@
 package com.Master.Auction.Service;
 
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class S3Service {
     private final AmazonS3 s3Client;
+    private final AmazonS3 amazonS3;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
@@ -25,5 +27,9 @@ public class S3Service {
                 .withCannedAcl(CannedAccessControlList.PublicRead));
 
         return s3Client.getUrl(bucketName, fileName).toString();
+    }
+
+    public void deleteFile(String fileName) {
+        amazonS3.deleteObject(new DeleteObjectRequest(bucketName, fileName));
     }
 }

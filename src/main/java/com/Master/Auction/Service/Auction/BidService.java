@@ -44,7 +44,6 @@ public class BidService {
             memberRepository.save(memberEntity);
             bidRepository.save(newBid);
         }
-
     }
 
     public BidDTO findByAuctionId(Long AuctionId) {

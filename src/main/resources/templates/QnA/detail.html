@@ -44,7 +44,7 @@
                     <td th:text="${question.questionhits}"></td>
                 </tr>
                 <tr class="profile-image-container mb-6" th:if="${question.fileAttached == 1}">
-                    <img th:src="@{|/Question/${question.storedFileName}|}" alt="Profile Image" class="profile-image">
+                    <img th:src="@{|${question.storedFileName}|}" alt="Profile Image" class="profile-image">
                 </tr>
                 </tbody>
             </table>

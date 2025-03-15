@@ -19,7 +19,7 @@
 
         <div class="p-6 flex flex-col items-center">
             <div class="profile-image-container mb-6" th:if="${member.fileAttached == 1}">
-                <img th:src="@{|/upload/${member.storedFileName}|}" alt="Profile Image" class="profile-image">
+                <img th:src="@{|${member.storedFileName}|}" alt="Profile Image" class="profile-image">
             </div>
 
             <table class="w-full table-fixed text-lg border-separate border-spacing-2">

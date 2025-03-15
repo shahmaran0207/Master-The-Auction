@@ -60,6 +60,10 @@ public class AuctionEntity {
     @JoinColumn(name = "member_id", nullable = false)
     private MemberEntity memberEntity;
 
+    @OneToOne(mappedBy = "auction", cascade = CascadeType.ALL)
+    private WinningBidEntity winningBid;
+
+
     public static AuctionEntity toSaveEntity(AuctionDTO auctionDTO, MemberEntity memberEntity, LocalDateTime endTime) {
         AuctionEntity auctionEntity = new AuctionEntity();
         auctionEntity.setAuctionTitle(auctionDTO.getAuctionTitle());

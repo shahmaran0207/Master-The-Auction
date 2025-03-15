@@ -59,9 +59,7 @@ public class MemberEntity {
     private List<MemberHateEntity> hatedByMembers = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<WinningBidEntity> winningBids = new ArrayList<>(); // 사용자가 낙찰받은 기록
-
-
+    private List<WinningBidEntity> winningBids = new ArrayList<>();
 
     @OneToMany(mappedBy = "memberEntity", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<BidEntity> bids = new ArrayList<>();
