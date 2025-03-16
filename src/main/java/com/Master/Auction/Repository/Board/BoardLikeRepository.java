@@ -1,5 +1,6 @@
 package com.Master.Auction.Repository.Board;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.Master.Auction.Entity.Board.BoardLikeEntity;
 import com.Master.Auction.Entity.Member.MemberEntity;
@@ -11,4 +12,7 @@ public interface BoardLikeRepository extends JpaRepository<BoardLikeEntity, Long
     int countByBoardEntity(BoardEntity board);
 
     void deleteByMemberEntityAndBoardEntity(MemberEntity member, BoardEntity board);
+
+    @Transactional
+    void deleteByBoardEntity_Id(Long boardId);
 }

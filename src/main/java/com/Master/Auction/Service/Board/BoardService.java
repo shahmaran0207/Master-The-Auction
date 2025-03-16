@@ -1,11 +1,7 @@
 package com.Master.Auction.Service.Board;
 
-import com.Master.Auction.Repository.Board.BoardFileRepository;
-import com.Master.Auction.Repository.Board.CommentRepository;
 import com.Master.Auction.Repository.Member.MemberRepository;
-import com.Master.Auction.Repository.Board.BoardRepository;
 import com.Master.Auction.Entity.Board.BoardFileEntity;
-import com.Master.Auction.Service.S3Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.Master.Auction.Entity.Member.MemberEntity;
 import com.Master.Auction.Entity.Board.BoardEntity;
@@ -13,7 +9,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import com.Master.Auction.Service.ImageService;
 import org.springframework.stereotype.Service;
+import com.Master.Auction.Repository.Board.*;
 import com.Master.Auction.DTO.Board.BoardDTO;
+import com.Master.Auction.Service.S3Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import jakarta.transaction.Transactional;
@@ -21,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.List;
-import java.io.File;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +29,8 @@ public class BoardService {
     private final MemberRepository memberRepository;
     private final BoardFileRepository boardFileRepository;
     private final CommentRepository commentRepository;
+    private final BoardLikeRepository boardLikeRepository;
+    private final BoardHateRepository boardHateRepository;
 
     public Page<BoardDTO> paging(Pageable pageable) {
         int page = pageable.getPageNumber() - 1;
@@ -96,11 +95,12 @@ public class BoardService {
         }
         else {
             for (BoardFileEntity file : boardFiles) {
-                String storedFileName = file.getStoredFileName(); // S3에 저장된 파일 이름
-                s3Service.deleteFile(storedFileName); // S3에서 파일 삭제
+                imageService.deleteImage(file.getStoredFileName());
+                boardFileRepository.delete(file);
             }
 
-            boardFileRepository.deleteByBoardEntity_Id(id);
+                boardLikeRepository.deleteByBoardEntity_Id(id);
+                boardHateRepository.deleteByBoardEntity_Id(id);
                 commentRepository.deleteByBoardEntity_Id(id);
                 boardRepository.deleteById(id);
             }

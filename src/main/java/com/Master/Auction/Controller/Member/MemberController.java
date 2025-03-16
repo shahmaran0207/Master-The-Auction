@@ -4,7 +4,6 @@ import com.Master.Auction.Service.Auction.WinningBidService;
 import com.Master.Auction.Service.Auction.AuctionService;
 import com.Master.Auction.Service.Member.MemberService;
 import com.google.firebase.auth.FirebaseAuthException;
-import com.Master.Auction.Service.Auction.BidService;
 import org.springframework.data.web.PageableDefault;
 import com.Master.Auction.DTO.Auction.AuctionDTO;
 import com.Master.Auction.DTO.Auction.WinningDTO;
@@ -18,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.FirebaseAuth;
 import org.springframework.data.domain.Page;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ui.Model;
 import jakarta.servlet.http.Cookie;
@@ -31,7 +29,6 @@ import java.util.Map;
 public class MemberController {
 
     private final MemberService memberService;
-    private final BidService bidService;
     private final AuctionService auctionService;
     private final WinningBidService winningBidService;
 
@@ -165,28 +162,6 @@ public class MemberController {
         model.addAttribute("loginName", loginName);
         model.addAttribute("page", pageable.getPageNumber());
         return "Member/detail";
-    }
-
-    @GetMapping("/delete/{id}")
-    public String delete(@CookieValue(value = "firebaseUid", defaultValue = "") String firebaseUid,
-                         @PathVariable Long id, HttpSession session, HttpServletResponse response) {
-        try {
-            if (firebaseUid != null) {
-                FirebaseAuth.getInstance().deleteUser(firebaseUid);
-            }
-        } catch (FirebaseAuthException e) {
-            e.printStackTrace();
-        }
-
-        deleteCookie(response, "loginId");
-        deleteCookie(response, "memberRole");
-        deleteCookie(response, "firebaseUid");
-        deleteCookie(response, "loginName");
-        deleteCookie(response, "loginEmail");
-
-        memberService.deleteById(id);
-
-        return "redirect:/";
     }
 
     private void deleteCookie(HttpServletResponse response, String name) {

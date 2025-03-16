@@ -1,13 +1,11 @@
 package com.Master.Auction.Service.QnA.Question;
 
-import com.Master.Auction.Entity.Board.BoardFileEntity;
-import com.Master.Auction.Repository.QnA.Answer.AnswerRepository;
 import com.Master.Auction.Repository.QnA.Question.QuestionFileRepository;
 import com.Master.Auction.Repository.QnA.Question.QuestionRepository;
+import com.Master.Auction.Repository.QnA.Answer.AnswerRepository;
 import com.Master.Auction.Entity.QnA.Question.QuestionFileEntity;
 import com.Master.Auction.Entity.QnA.Question.QuestionEntity;
 import com.Master.Auction.Repository.Member.MemberRepository;
-import com.Master.Auction.Service.S3Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.Master.Auction.DTO.QnA.Question.QuestionDTO;
 import com.Master.Auction.Entity.Member.MemberEntity;
@@ -15,15 +13,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import com.Master.Auction.Service.ImageService;
 import org.springframework.stereotype.Service;
+import com.Master.Auction.Service.S3Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-
-import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -100,11 +97,10 @@ public class QuestionService {
         }
         else {
             for (QuestionFileEntity file : questionFiles) {
-                String storedFileName = file.getStoredFileName(); // S3에 저장된 파일 이름
-                s3Service.deleteFile(storedFileName); // S3에서 파일 삭제
-            }
 
-                questionFileRepository.findByQuestionEntity_Id(id);
+                imageService.deleteImage(file.getStoredFileName());
+                questionFileRepository.delete(file);
+            }
                 answerRepository.deleteByQuestionEntity_Id(id);
                 questionRepository.deleteById(id);
             }

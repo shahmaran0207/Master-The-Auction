@@ -36,10 +36,6 @@ public class MemberService {
         } else return null;
     }
 
-    public void deleteById(Long id) {
-        memberRepository.deleteById(id);
-    }
-
     public void save(MemberDTO memberDTO) throws IOException, FirebaseAuthException {
 
         UserRecord.CreateRequest request = new UserRecord.CreateRequest()
