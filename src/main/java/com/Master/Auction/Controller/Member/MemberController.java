@@ -195,7 +195,7 @@ public class MemberController {
         memberService.update(memberDTO);
 
         model.addAttribute("member", memberDTO);
-        return "Member/myPage";
+        return "redirect:/";
     }
 
     @GetMapping("/buyList/{id}")
