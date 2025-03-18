@@ -390,9 +390,6 @@
 - 고객지원을 누르면 문의사항 목록으로 이동합니다.
 - 각 페이지를 로그인하지 않은 상태에서 누르면 로그인 인터셉터에 의해 로그인 페이지로 이동합니다.
 
-|상단 배너 |
-|-------------------|
-|![banner](https://github.com/shahmaran0207/Master-The-Auction/blob/main/Readme_images/MTA_BANNER.png)|
 <br>
 
 ### [마이페이지]
@@ -401,31 +398,6 @@
 - 정보수정, 내가 작성한 글, 내가 낙찰받은 내역, 내가 등록한 경매 물품 목록 버튼이 있으며, 누르면 각 페이지로 이동합니다.
 - 경매에 필요한 물품은 경매 포인트 구매 페이지에서 결제하면 충전 가능합니니다.
 
-| 마이 페이지| 
-|----------|
-|![mypage](https://github.com/shahmaran0207/Master-The-Auction/blob/main/Readme_images/MTA_MYPAGE.png)|
-
-<br>
-
-
-### [가이드 목록]
-- 가입 인원 중 가이드로 신청한 목록을 볼 수 있습니다.
-- 조회 버튼 클릭 시, 상세조회 페이지로 넘어갑니다.
-
-| 판매자 목록 |
-|-------------------|
-|![memberlist](https://github.com/shahmaran0207/Master-The-Auction/blob/main/Readme_images/MTA_MEMBERLIST.png)|
-
-<br>
-
-### [판매자 상세조회]
-- 가이드 이름, 이메일, 좋아요, 싫어요 개수를 확인 가능합니다.
-- 다른 사람들이 판매자에 대해 작성한 댓글을 확인 가능하며, 본인도 댓글을 작성할 수 있습니다.
-- 좋아요, 싫어요는 개인당 1번 누를 수 있으며, 다시한번 누르면 취소됩니다.
-
-|판매자 상세조회  |
-|-------------------|
-|![memberlist](https://github.com/shahmaran0207/Master-The-Auction/blob/main/Readme_images/MTA_MEMBERLIST.png)|
 
 <br>
 
@@ -471,9 +443,6 @@
 - 해당 페이지에서는 사람들이 자유롭게 글을 작성할 수 있으며, 경매 후기, 멤버 후기 등을 공유할 수 있습니다.
 - 각 게시글의 아이디, 제목, 작성자, 작성시간, 조회수를 확인가능합니다.
 
-| 커뮤니티 글 목록 |
-|----------|
-|![communitylist](https://github.com/shahmaran0207/Master-The-Auction/blob/main/Readme_images/MTA_COMMUNITYLIST.png)|
 <br>
 
 ### [커뮤니티 글 작성]
@@ -544,26 +513,17 @@
 ### [내가 낙찰받은 내역]
 - 마이페이지에서 내가 낙찰받은 내역 버튼을 누르면 내가 낙찰받은 내역을 확인할 수 있습니니다.
 
-| 내가 낙찰받은 내역|
-|----------|
-|![myquctionlist](https://github.com/shahmaran0207/Master-The-Auction/blob/main/Readme_images/myquctionlist.png)|
 <br>
 
 ### [내가 등록한 경매물품]
 - 마이페이지에서 내가 등록한 경매물품 버튼을 누르면 내가 등록한 경매물품 목록을 확인할 수 있습니니다.
 
-| 내가 등록한 경매물품|
-|----------|
-|![myregistlist](https://github.com/shahmaran0207/Master-The-Auction/blob/main/Readme_images/myregistlist.png)|
 
 <br>
 
 ### [내가 작성한 글]
 - 마이페이지에서 내가 작성한 글 버튼을 누르면 내가 작성한 글 목록을 확인할 수 있습니니다.
 
-| 내가 작성한 글|
-|----------|
-|![mywritelist](https://github.com/shahmaran0207/Master-The-Auction/blob/main/Readme_images/mywritelist.png)|
 
 <br>
 
@@ -574,7 +534,7 @@
 
 | 개인정보 수정|
 |----------|
-|![MTA_CHANGE](https://github.com/shahmaran0207/Master-The-Auction/blob/main/Readme_images/MTA_CHANGE.png)|
+|![MTA_CHANGE](https://github.com/shahmaran0207/Master-The-Auction/blob/main/Readme_images/MTA_CHANGE.gif)|
 
 <br>
 
