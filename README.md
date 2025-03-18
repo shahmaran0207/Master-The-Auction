@@ -48,7 +48,7 @@
 
 | RDS | EC2 | S3 | SSL/TLS | Route 53 | 
 |:---:|:---:|:--:|:--------:|:--------:|
-| <img src="https://github.com/shahmaran0207/Master-The-Auction/blob/main/Readme_images/rds.png" alt="RDS" width="60"/> | <img src="https://github.com/shahmaran0207/Master-The-Auction/blob/main/Readme_images/ec2.png" alt="EC2" width="60"/>| <img src="https://github.com/shahmaran0207/Master-The-Auction/blob/main/Readme_images/s3.png" alt="S3" width="60"/> | <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/firebase/ssl.png" alt="ssl" width="60"/> |  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/firebase/Route53.png" alt="Route53" width="60"/> | 
+| <img src="https://github.com/shahmaran0207/Master-The-Auction/blob/main/Readme_images/rds.png" alt="RDS" width="60"/> | <img src="https://github.com/shahmaran0207/Master-The-Auction/blob/main/Readme_images/ec2.png" alt="EC2" width="60"/>| <img src="https://github.com/shahmaran0207/Master-The-Auction/blob/main/Readme_images/s3.png" alt="S3" width="60"/> | <img src="https://github.com/shahmaran0207/Master-The-Auction/blob/main/Readme_images/ssl.png" alt="ssl" width="60"/> |  <img src="https://github.com/shahmaran0207/Master-The-Auction/blob/main/Readme_images/Route53.png" alt="Route53" width="60"/> | 
 
 <br>
 
