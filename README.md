@@ -358,7 +358,7 @@
 
 | 회원가입 |
 |----------|
-|![save](https://github.com/shahmaran0207/Master-The-Auction/blob/main/Readme_images/MTA_SAVE.gif)|
+|![save](https://github.com/shahmaran0207/Master-The-Auction/blob/main/Readme_images/제목 없음.gif)|
 
 <br>
 
