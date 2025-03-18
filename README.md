@@ -1,14 +1,6 @@
 # 📣 Master-The-Auction 💰
 
 ---
- 
- ## 🌐 **[🔗 서비스 바로가기](https://mastertheauction.store/)**
- 
-- **Test ID**: `test@naver.com`  
-- **Test PW**: `testtest`
-
-<sup>※ <strong>502 Bad Gateway</strong> 가 뜰 경우 새로고침을 하면 서비스를 계속 이용하실 수 있습니다.</sup>
- ---
 
 ## 1️⃣ Project Overview (프로젝트 개요)
 
