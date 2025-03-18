@@ -1,6 +1,6 @@
 # 📣 Master-The-Auction 💰
 
-<img src="https://github.com/shahmaran0207/Master-The-Auction/blob/main/Readme_images/wit.png" alt="WIT Banner" width="100%"/>
+<img src="https://github.com/shahmaran0207/Master-The-Auction/blob/main/Readme_images/MTA.png" alt="WIT Banner" width="100%"/>
 
 ---
 
